@@ -28,16 +28,18 @@ function App() {
 
     socket.on("coords",(msg)=>{
       console.log("Moved");
-      let x = msg[0].x;
-      let y = msg[0].y;
-      x = -1.5 + x * 3;
+      let x = msg[1].x;
+      let y = msg[1].y;
+      x = 1.5 - x * 3;
       y = 3 - y * 3;
+
       let positions = {
         left: killerBalls.left.position,
         right: killerBalls.right.position
       }
-      positions[currentSelection].x = x;
-      positions[currentSelection].y = y;
+      console.log(msg[0]);
+      positions[msg[0]?"left":"right"].x = x;
+      positions[msg[0]?"left":"right"].y = y;
       changeKillerBallPosition(positions.left,positions.right);
     });
 

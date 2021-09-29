@@ -81,12 +81,13 @@ function startVideoProcessing() {
 
 function processVideo() {
     vc.read(src);
-    let result = passThrough(src);
+    let result = passThrough(src, true);
+    result = passThrough(result, false);
     cv.imshow("canvasOutput", result);
     requestAnimationFrame(processVideo);
 }
 
-function passThrough(src) {
+function passThrough(src, green) {
     //guassian blur
     cv.GaussianBlur(
         src,
@@ -101,8 +102,16 @@ function passThrough(src) {
     cv.cvtColor(dstC3, dstC3, cv.COLOR_RGBA2RGB);
     cv.cvtColor(dstC3, dstC3, cv.COLOR_RGB2HSV);
     //inrange
-    let lowScalar = new cv.Scalar(29, 86, 6, 255);
-    let highScalar = new cv.Scalar(64, 255, 255, 255);
+    let lowScalar;
+    let highScalar;
+    if (green) {
+        lowScalar = new cv.Scalar(29, 86, 6, 255);
+        highScalar = new cv.Scalar(64, 255, 255, 255);
+    }
+    else {
+        lowScalar = new cv.Scalar(55,64,83, 255);
+        highScalar = new cv.Scalar(174,201,210, 255);
+    }
     let low = new cv.Mat(height, width, dstC3.type(), lowScalar);
     let high = new cv.Mat(height, width, dstC3.type(), highScalar);
     cv.inRange(dstC3, low, high, dstC1);
@@ -135,13 +144,13 @@ function passThrough(src) {
         let test = document.getElementById("canvasOutput");
         circle.center.x = circle.center.x / test.width;
         circle.center.y = circle.center.y / test.height;
-        if(sendCenter)
-        socket.emit("coords",[circle.center,circle.radius]);
+        if (sendCenter)
+            socket.emit("coords", [green,circle.center, circle.radius]);
         //console.log(circle);
     }
     contours.delete();
     hierarchy.delete();
-    frame.innerHTML = `${Math.floor(1/(Date.now() - timeStart)*1000)} fps`;
+    frame.innerHTML = `${Math.floor(1 / (Date.now() - timeStart) * 1000)} fps`;
     timeStart = Date.now();
     return src;
 }
@@ -180,9 +189,14 @@ function doItPa() {
     // else{
     //     sendCenter = true;
     // }
-    socket = io(ip.value);
-    socket.on("connect", () => {console.log("connected"); }); // either with send()  socket.send("Hello!");
-        // or with emit() and custom event names  socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));});
+    socket = io("http://localhost:5000/", {
+        withCredentials: true,
+        extraHeaders: {
+            "my-custom-header": "abcd"
+        }
+    });;
+    socket.on("connect", () => { console.log("connected"); }); // either with send()  socket.send("Hello!");
+    // or with emit() and custom event names  socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));});
     console.log(socket);
     sendCenter = true;
 }
