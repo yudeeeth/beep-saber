@@ -97,7 +97,7 @@ function passThrough(src, green) {
         0,
         cv.BORDER_DEFAULT
     );
-    //return dstC3;
+    // return dstC3;
     //convert to hsv
     cv.cvtColor(dstC3, dstC3, cv.COLOR_RGBA2RGB);
     cv.cvtColor(dstC3, dstC3, cv.COLOR_RGB2HSV);
@@ -117,17 +117,10 @@ function passThrough(src, green) {
     cv.inRange(dstC3, low, high, dstC1);
     low.delete();
     high.delete();
-    //return dstC1;
-    // erode and dilate
-    //contours
-    // cv.cvtColor(dstC1, dstC1, cv.COLOR_HSV2GRAY);
+    // return dstC1;
     cv.threshold(dstC1, dstC4, 120, 200, cv.THRESH_BINARY);
     let contours = new cv.MatVector();
     let hierarchy = new cv.Mat();
-
-    //   contours.add(controls, 'contoursMode', {'RETR_EXTERNAL': cv.RETR_EXTERNAL, 'RETR_LIST': cv.RETR_LIST, 'RETR_CCOMP': cv.RETR_CCOMP, 'RETR_TREE': cv.RETR_TREE}).name('mode');
-    //   contours.add(controls, 'contoursMethod', {'CHAIN_APPROX_NONE': cv.CHAIN_APPROX_NONE, 'CHAIN_APPROX_SIMPLE': cv.CHAIN_APPROX_SIMPLE, 'CHAIN_APPROX_TC89_L1': cv.CHAIN_APPROX_TC89_L1, 'CHAIN_APPROX_TC89_KCOS': cv.CHAIN_APPROX_TC89_KCOS}).name('method');
-
     cv.findContours(
         dstC4,
         contours,
@@ -146,7 +139,6 @@ function passThrough(src, green) {
         circle.center.y = circle.center.y / test.height;
         if (sendCenter)
             socket.emit("coords", [green,circle.center, circle.radius]);
-        //console.log(circle);
     }
     contours.delete();
     hierarchy.delete();

@@ -100,10 +100,6 @@ function App() {
       room.add(object);
       killerBalls[arr[i]] = object;
     }
-    const object = new THREE.Mesh(
-      new THREE.BoxGeometry(0.15, 15, 0.15),
-      new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff })
-    );
   }
 
   const changeKillerBallPosition = (left,right) => {
@@ -154,13 +150,13 @@ function App() {
     document.body.appendChild(VRButton.createButton(renderer));
 
     // Remove this later
-    container.addEventListener('mousedown', (event) => {
-      if(event.button === 0){
-        currentSelection = 'left';
-      }else if(event.button === 2){
-        currentSelection = 'right';
-      }
-    });
+    // container.addEventListener('mousedown', (event) => {
+    //   if(event.button === 0){
+    //     currentSelection = 'left';
+    //   }else if(event.button === 2){
+    //     currentSelection = 'right';
+    //   }
+    // });
     
     // container.addEventListener("mousemove", (event)=>{
     //   let x = event.clientX;
