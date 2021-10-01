@@ -15,7 +15,7 @@ function App() {
   let killerBalls = {};
 
   useEffect(() => {
-    const socket = io("http://localhost:5000/", {
+    const socket = io("https://192.168.1.10/", {
       withCredentials: true,
       extraHeaders: {
         "my-custom-header": "abcd"
