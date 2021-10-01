@@ -1,6 +1,8 @@
-const httpServer = require('http').createServer();
-
-const io = require("socket.io")(httpServer, {
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
     cors: {
         origin: ["http://localhost:3000","http://localhost:5500"],
         methods: ["GET", "POST"],
@@ -8,6 +10,15 @@ const io = require("socket.io")(httpServer, {
         credentials: true
     }
 });
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/serve/index.html');
+});
+
+server.listen(5000, () => {
+    console.log('listening on *:5000');
+});
+
 
 let allSockets = [];
 
@@ -26,6 +37,3 @@ io.on("connection", (socket) => {
         allSockets = allSockets.filter(s => s.id !== socket.id);
     });
 });
-
-
-io.listen(5000);
