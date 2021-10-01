@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/beep-saber/static/css/main.afd7172b.chunk.css",
+    "main.js": "/beep-saber/static/js/main.a92cb247.chunk.js",
+    "main.js.map": "/beep-saber/static/js/main.a92cb247.chunk.js.map",
+    "runtime-main.js": "/beep-saber/static/js/runtime-main.6af949ab.js",
+    "runtime-main.js.map": "/beep-saber/static/js/runtime-main.6af949ab.js.map",
+    "static/js/2.75cf2c32.chunk.js": "/beep-saber/static/js/2.75cf2c32.chunk.js",
+    "static/js/2.75cf2c32.chunk.js.map": "/beep-saber/static/js/2.75cf2c32.chunk.js.map",
+    "index.html": "/beep-saber/index.html",
+    "static/css/main.afd7172b.chunk.css.map": "/beep-saber/static/css/main.afd7172b.chunk.css.map",
+    "static/js/2.75cf2c32.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.75cf2c32.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6af949ab.js",
+    "static/js/2.75cf2c32.chunk.js",
+    "static/css/main.afd7172b.chunk.css",
+    "static/js/main.a92cb247.chunk.js"
+  ]
+}
