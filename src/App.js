@@ -6,221 +6,233 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 
 function App() {
-  const clock = new THREE.Clock();
-  let container;
-  let camera, scene, raycaster, renderer;
-  let room;
-  let currentSelection = 'left';
-  let spawnObjectInterval;
-  let killerBalls = {};
+	// globals
+	const clock = new THREE.Clock();
+	let container;
+	let camera, scene, renderer;
+	let room;
+	let spawnObjectInterval;
+	let balls = {};
 
-  useEffect(() => {
-    const socket = io("https://beep-saber.herokuapp.com/", {
-      withCredentials: true,
-      extraHeaders: {
-        "my-custom-header": "abcd"
-      }
-    });;
+	// do once at the beginning
+	useEffect(() => {
+		const socket = io("https://beep-saber.herokuapp.com/", {
+			withCredentials: true,
+			extraHeaders: {
+				"my-custom-header": "abcd"
+			}
+		});;
 
-    socket.on("connect", () => {
-      console.log(socket.id);
-    });
+		socket.on("connect", () => {
+			console.log("Connected to", socket.id);
+		});
 
-    socket.on("coords",(msg)=>{
-      console.log("Moved");
-      let x = msg[1].x;
-      let y = msg[1].y;
-      x = 1.5 - x * 3;
-      y = 3 - y * 3;
+		socket.on("coords", (coords) => {
+			moveBallsUsing(coords);
+		});
 
-      let positions = {
-        left: killerBalls.left.position,
-        right: killerBalls.right.position
-      }
-      console.log(msg[0]);
-      positions[msg[0]?"left":"right"].x = x;
-      positions[msg[0]?"left":"right"].y = y;
-      changeKillerBallPosition(positions.left,positions.right);
-    });
+	}, []);
 
-  }, []);
+	const moveBallsUsing = (coords) => {
+		let x,y;
+		[x,y] = convertToWorldCoords(coords);
 
-  const createBasicRoom = () => {
-    // Create a room with LineSegments and a box line geometry with line basic material and add it to the scene
-    room = new THREE.LineSegments(
-      new BoxLineGeometry(3, 3, 15, 6, 6, 15).translate(0, 1.5, 0),
-      new THREE.LineBasicMaterial({ color: 0x808080 })
-    );
-    scene.add(room);
+		let positions = [
+			balls.left.position,
+			balls.right.position
+		];
 
-    // Add light to the scene
-    scene.add(new THREE.HemisphereLight(0x606060, 0x404040));
+		let index = coords[0]?1:0;
+		positions[index].x = x;
+		positions[index].y = y;
+		changeBallsPositions(positions);
+	};
 
-    const light = new THREE.DirectionalLight(0xffffff);
-    light.position.set(1, 1, 1).normalize();
-    scene.add(light);
-  }
+	const convertToWorldCoords = (coords) => {
+		let x = 1.5 - coords[1].x * 3;
+		let y = 3 - coords[1].y * 3;
+		return [x,y]; 
+	};
 
-  const createObject = (geometry) => {
-    const object = new THREE.Mesh(
-      geometry,
-      new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff })
-    );
+	const createRoom = () => {
+		// Create a room with LineSegments and a box line geometry with line basic material and add it to the scene
+		room = new THREE.LineSegments(
+			new BoxLineGeometry(3, 3, 15, 6, 6, 15).translate(0, 1.5, 0),
+			new THREE.LineBasicMaterial({ color: 0x808080 })
+		);
+		scene.add(room);
 
-    object.userData.velocity = new THREE.Vector3();
-    object.userData.objectType = 'obstacle';
+		// Add light to the scene
+		scene.add(new THREE.HemisphereLight(0x606060, 0x404040));
 
-    object.position.x = Math.random() * 3 - 1.5;
-    object.position.y = Math.random() * 3;
-    object.position.z = -6;
+		const light = new THREE.DirectionalLight(0xffffff);
+		light.position.set(1, 1, 1).normalize();
+		scene.add(light);
+	}
 
-    let arr = ['x','y','z'];
+	const createCube = (geometry) => {
+		const object = new THREE.Mesh(
+			geometry,
+			new THREE.MeshLambertMaterial({ color: Math.random() >0.5? 0xFF0000: 0x0000FF })
+		);
 
-    object.userData.velocity.z = 0.05;
-    return object;
-  }
+		object.userData.velocity = new THREE.Vector3();
+		object.userData.objectType = 'obstacle';
 
-  const spawnObjects = (geometry) => {
-    spawnObjectInterval = setInterval(() => {
-      room.add(createObject(geometry));
-    }, 1000);
-  }
+		object.position.x = Math.random() * 3 - 1.5;
+		object.position.y = Math.random() * 3;
+		object.position.z = -15;
 
-  const spawnKillerBalls = () => {
-    let arr = ['left','right'];
-    for(let i =0;i<2;i++){
-      const object = new THREE.Mesh(
-        new THREE.SphereGeometry(0.2, 16, 8),
-        new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff })
-      );
-      object.position.x = 0;
-      object.position.y = 1.5;
-      object.position.z = -1;
-      object.userData.objectType = 'killerBall';
-      room.add(object);
-      killerBalls[arr[i]] = object;
-    }
-  }
+		object.userData.velocity.z = 0.05;
+		return object;
+	}
 
-  const changeKillerBallPosition = (left,right) => {
-    let arr = ['x','y','z'];
-    for(let i = 0;i<3;i++){
-      killerBalls.left.position[arr[i]] = left[arr[i]];
-    }
-    for(let i = 0;i<3;i++){
-      killerBalls.right.position[arr[i]] = right[arr[i]];
-    }
-  }
+	const spawnObjectsAtIntervals = (geometry,interval) => {
+		spawnObjectInterval = setInterval(() => {
+			room.add(createCube(geometry));
+		}, interval);
+	}
 
-  init();
-  animate();
+	const createBalls = () => {
+		let arr = ['left', 'right'];
+		for (let i = 0; i < 2; i++) {
+			const object = new THREE.Mesh(
+				new THREE.SphereGeometry(0.2, 16, 8),
+				new THREE.MeshLambertMaterial({ color: i === 0? 0xFF0000:0x0000FF })
+			);
+			object.position.x = 0;
+			object.position.y = 1.5;
+			object.position.z = -1;
+			object.userData.objectType = 'killerBall';
+			room.add(object);
+			balls[arr[i]] = object;
+		}
+	}
 
+	const changeBallsPositions = (coords) => {
+		let leftBall = coords[0];
+		let rightBall = coords[1];
+		let arr = ['x', 'y', 'z'];
+		for (let i = 0; i < 3; i++) {
+			balls.left.position[arr[i]] = leftBall[arr[i]];
+		}
+		for (let i = 0; i < 3; i++) {
+			balls.right.position[arr[i]] = rightBall[arr[i]];
+		}
+	}
 
-  function init(){
-    // Make a container and append it to the body
-    container = document.createElement("div");
-    document.body.appendChild(container);
+	init();
+	animate();
 
-    // Create a three js scene and set background color
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x505050);
+	function init() {
+		// Make a container and append it to the body
+		container = document.createElement("div");
+		document.body.appendChild(container);
 
-    // Create a camera and set its position and add it to the scene
-    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10 );
-    camera.position.set(0, 1.6, 3);
-    scene.add(camera);
+		// Create a three js scene and set background color
+		scene = new THREE.Scene();
+		scene.background = new THREE.Color(0x000000);
 
-    createBasicRoom();
-    
-    spawnObjects(new THREE.BoxGeometry(0.15, 0.15, 0.15));
-    spawnKillerBalls();
+		// Create a camera and set its position and add it to the scene
+		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10);
+		camera.position.set(0, 1.6, 3);
+		scene.add(camera);
 
-    raycaster = new THREE.Raycaster();
+		createRoom();
 
-    // Create a renderer and set its size and exanble xr and add it to the container
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.xr.enabled = true;
-    container.appendChild(renderer.domElement);
+		//major refactoring needed for spawn object and spawn balls
+		spawnObjectsAtIntervals(new THREE.BoxGeometry(0.5, 0.5, 0.5),1000);
+		createBalls();
 
-    window.addEventListener("resize", onWindowResize);
+		// raycaster = new THREE.Raycaster();
 
-    document.body.appendChild(VRButton.createButton(renderer));
+		// Create a renderer and set its size and exanble xr and add it to the container
+		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.outputEncoding = THREE.sRGBEncoding;
+		renderer.xr.enabled = true;
+		container.appendChild(renderer.domElement);
 
-    // Remove this later
-    // container.addEventListener('mousedown', (event) => {
-    //   if(event.button === 0){
-    //     currentSelection = 'left';
-    //   }else if(event.button === 2){
-    //     currentSelection = 'right';
-    //   }
-    // });
-    
-    // container.addEventListener("mousemove", (event)=>{
-    //   let x = event.clientX;
-    //   let y = event.clientY;
-    //   x = -1.5 + x / window.innerWidth * 3;
-    //   y = 3 - (y / window.innerHeight) * 3;
-    //   let positions = {
-    //     left: killerBalls.left.position,
-    //     right: killerBalls.right.position
-    //   }
-    //   positions[currentSelection].x = x;
-    //   positions[currentSelection].y = y;
-    //   changeKillerBallPosition(positions.left,positions.right);
-    // });
+		window.addEventListener("resize", onWindowResize);
 
-  }
+		document.body.appendChild(VRButton.createButton(renderer));
 
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  }
+		// Remove this later
+		// container.addEventListener('mousedown', (event) => {
+		//   if(event.button === 0){
+		//     currentSelection = 'left';
+		//   }else if(event.button === 2){
+		//     currentSelection = 'right';
+		//   }
+		// });
 
-  function animate() {
-    renderer.setAnimationLoop(render);
-  }
+		// container.addEventListener("mousemove", (event)=>{
+		//   let x = event.clientX;
+		//   let y = event.clientY;
+		//   x = -1.5 + x / window.innerWidth * 3;
+		//   y = 3 - (y / window.innerHeight) * 3;
+		//   let positions = {
+		//     left: balls.left.position,
+		//     right: balls.right.position
+		//   }
+		//   positions[currentSelection].x = x;
+		//   positions[currentSelection].y = y;
+		//   changeKillerBallPosition(positions.left,positions.right);
+		// });
 
-  const handleIntesections = () => {
-    for (let i = 0; i < room.children.length; i++) {
-      if (room.children[i].userData.objectType === "obstacle") {
-        const cube = room.children[i];
-        for (let prop in killerBalls){
-          let dist;
-          if(cube.geometry.boundingSphere !== null && killerBalls[prop].geometry.boundingSphere !== null){
-            dist = Math.pow(cube.geometry.boundingSphere.radius,2) + Math.pow(killerBalls[prop].geometry.boundingSphere.radius,2);
-          }
-          if (cube.position.distanceToSquared(killerBalls[prop].position) < dist) {
-            console.log('collision');
-            room.remove(cube);
-          }
-        }
-      }
-    }
-  }
+	}
 
-  function render() {
-    const delta = clock.getDelta() * 60;
+	function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	}
 
-    handleIntesections();
+	function animate() {
+		renderer.setAnimationLoop(render);
+	}
 
-    for (let i = 0; i < room.children.length; i++) {
-      const cube = room.children[i];
-      if (cube.userData.objectType === "obstacle") {
-        cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
-        cube.position.add(cube.userData.velocity);
-        if (cube.position.z < -7.5 || cube.position.z > 7.5) {
-          room.remove(cube);
-        }
-      }
-    }
+	const handleCollisions = () => {
+		for (let i = 0; i < room.children.length; i++) {
+			if (room.children[i].userData.objectType === "obstacle") {
+				const cube = room.children[i];
+				for (let prop in balls) {
+					let dist;
+					if (cube.geometry.boundingSphere !== null && balls[prop].geometry.boundingSphere !== null) {
+						dist = Math.pow(cube.geometry.boundingSphere.radius, 2) + Math.pow(balls[prop].geometry.boundingSphere.radius, 2);
+					}
+					if (cube.position.distanceToSquared(balls[prop].position) < dist) {
+						console.log('collision');
+						// add collision animation here
+						room.remove(cube);
+					}
+				}
+			}
+		}
+	}
 
-    renderer.render(scene, camera);
-  }
-  return <div className="App"></div>;
+	// called every frame
+	function render() {
+		const delta = clock.getDelta() * 60;
+
+		handleCollisions();
+
+		for (let i = 0; i < room.children.length; i++) {
+			const cube = room.children[i];
+			if (cube.userData.objectType === "obstacle") {
+				cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
+				cube.position.add(cube.userData.velocity);
+				if (cube.position.z > 7.5) {
+					room.remove(cube);
+				}
+			}
+		}
+
+		renderer.render(scene, camera);
+	}
+
+	return <div className="App"></div>;
 }
 
 export default App;
