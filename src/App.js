@@ -4,6 +4,8 @@ import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
 import { io } from "socket.io-client";
 import { useEffect } from "react";
+import { onWindowResize, animate , initialise} from "./utils/setup.js"
+
 
 function App() {
 	// globals
@@ -57,7 +59,7 @@ function App() {
 	const createRoom = () => {
 		// Create a room with LineSegments and a box line geometry with line basic material and add it to the scene
 		room = new THREE.LineSegments(
-			new BoxLineGeometry(3, 3, 15, 6, 6, 15).translate(0, 1.5, 0),
+			new BoxLineGeometry(3, 3, 30, 6, 6, 15).translate(0, 1.5, 0),
 			new THREE.LineBasicMaterial({ color: 0x808080 })
 		);
 		scene.add(room);
@@ -122,6 +124,7 @@ function App() {
 	}
 
 	init();
+	initialise(renderer,camera,room,balls,scene,clock);
 	animate();
 
 	function init() {
@@ -154,7 +157,7 @@ function App() {
 		renderer.xr.enabled = true;
 		container.appendChild(renderer.domElement);
 
-		window.addEventListener("resize", onWindowResize);
+		window.addEventListener("resize",()=>{ onWindowResize();});
 
 		document.body.appendChild(VRButton.createButton(renderer));
 
@@ -181,55 +184,6 @@ function App() {
 		//   changeKillerBallPosition(positions.left,positions.right);
 		// });
 
-	}
-
-	function onWindowResize() {
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-		renderer.setSize(window.innerWidth, window.innerHeight);
-	}
-
-	function animate() {
-		renderer.setAnimationLoop(render);
-	}
-
-	const handleCollisions = () => {
-		for (let i = 0; i < room.children.length; i++) {
-			if (room.children[i].userData.objectType === "obstacle") {
-				const cube = room.children[i];
-				for (let prop in balls) {
-					let dist;
-					if (cube.geometry.boundingSphere !== null && balls[prop].geometry.boundingSphere !== null) {
-						dist = Math.pow(cube.geometry.boundingSphere.radius, 2) + Math.pow(balls[prop].geometry.boundingSphere.radius, 2);
-					}
-					if (cube.position.distanceToSquared(balls[prop].position) < dist) {
-						console.log('collision');
-						// add collision animation here
-						room.remove(cube);
-					}
-				}
-			}
-		}
-	}
-
-	// called every frame
-	function render() {
-		const delta = clock.getDelta() * 60;
-
-		handleCollisions();
-
-		for (let i = 0; i < room.children.length; i++) {
-			const cube = room.children[i];
-			if (cube.userData.objectType === "obstacle") {
-				cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
-				cube.position.add(cube.userData.velocity);
-				if (cube.position.z > 7.5) {
-					room.remove(cube);
-				}
-			}
-		}
-
-		renderer.render(scene, camera);
 	}
 
 	return <div className="App"></div>;
