@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
 import { io } from "socket.io-client";
 import { useEffect } from "react";
-import { onWindowResize, animate , initialise} from "./utils/setup.js"
+import { onWindowResize, animate, initialise } from "./utils/setup.js"
 
 
 function App() {
@@ -15,6 +15,7 @@ function App() {
 	let room;
 	let spawnObjectInterval;
 	let balls = {};
+	let roomcode = "beepbeep";
 
 	// do once at the beginning
 	useEffect(() => {
@@ -30,30 +31,38 @@ function App() {
 		});
 
 		socket.on("coords", (coords) => {
-			moveBallsUsing(coords);
+			if (coords[0] == roomcode)
+				moveBallsUsing(coords.slice(1));
 		});
 
 	}, []);
 
 	const moveBallsUsing = (coords) => {
-		let x,y;
-		[x,y] = convertToWorldCoords(coords);
+		let x, y;
+		[x, y] = convertToWorldCoordsxy(coords);
+		// [z, y2] = convertToWorldCoordsxy(coords);
 
 		let positions = [
 			balls.left.position,
 			balls.right.position
 		];
 
-		let index = coords[0]?1:0;
-		positions[index].x = x;
-		positions[index].y = y;
+		let index = coords[0] ? 1 : 0;
+		if (coords.splice(-1)[0] == "front") {
+			positions[index].x = x;
+			positions[index].y = y;
+		}
+		else {
+			positions[index].z = x - 3 ;
+			positions[index].y = y;
+		}
 		changeBallsPositions(positions);
 	};
 
-	const convertToWorldCoords = (coords) => {
+	const convertToWorldCoordsxy = (coords) => {
 		let x = 1.5 - coords[1].x * 3;
 		let y = 3 - coords[1].y * 3;
-		return [x,y]; 
+		return [x, y];
 	};
 
 	const createRoom = () => {
@@ -75,7 +84,7 @@ function App() {
 	const createCube = (geometry) => {
 		const object = new THREE.Mesh(
 			geometry,
-			new THREE.MeshLambertMaterial({ color: Math.random() >0.5? 0xFF0000: 0x0000FF })
+			new THREE.MeshLambertMaterial({ color: Math.random() > 0.5 ? 0xFF0000 : 0x0000FF })
 		);
 
 		object.userData.velocity = new THREE.Vector3();
@@ -89,7 +98,7 @@ function App() {
 		return object;
 	}
 
-	const spawnObjectsAtIntervals = (geometry,interval) => {
+	const spawnObjectsAtIntervals = (geometry, interval) => {
 		spawnObjectInterval = setInterval(() => {
 			room.add(createCube(geometry));
 		}, interval);
@@ -100,7 +109,7 @@ function App() {
 		for (let i = 0; i < 2; i++) {
 			const object = new THREE.Mesh(
 				new THREE.SphereGeometry(0.2, 16, 8),
-				new THREE.MeshLambertMaterial({ color: i === 0? 0xFF0000:0x0000FF })
+				new THREE.MeshLambertMaterial({ color: i === 0 ? 0xFF0000 : 0x0000FF })
 			);
 			object.position.x = 0;
 			object.position.y = 1.5;
@@ -124,7 +133,7 @@ function App() {
 	}
 
 	init();
-	initialise(renderer,camera,room,balls,scene,clock);
+	initialise(renderer, camera, room, balls, scene, clock);
 	animate();
 
 	function init() {
@@ -144,10 +153,8 @@ function App() {
 		createRoom();
 
 		//major refactoring needed for spawn object and spawn balls
-		spawnObjectsAtIntervals(new THREE.BoxGeometry(0.5, 0.5, 0.5),1000);
+		spawnObjectsAtIntervals(new THREE.BoxGeometry(0.5, 0.5, 0.5), 1000);
 		createBalls();
-
-		// raycaster = new THREE.Raycaster();
 
 		// Create a renderer and set its size and exanble xr and add it to the container
 		renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -157,32 +164,9 @@ function App() {
 		renderer.xr.enabled = true;
 		container.appendChild(renderer.domElement);
 
-		window.addEventListener("resize",()=>{ onWindowResize();});
+		window.addEventListener("resize", () => { onWindowResize(); });
 
 		document.body.appendChild(VRButton.createButton(renderer));
-
-		// Remove this later
-		// container.addEventListener('mousedown', (event) => {
-		//   if(event.button === 0){
-		//     currentSelection = 'left';
-		//   }else if(event.button === 2){
-		//     currentSelection = 'right';
-		//   }
-		// });
-
-		// container.addEventListener("mousemove", (event)=>{
-		//   let x = event.clientX;
-		//   let y = event.clientY;
-		//   x = -1.5 + x / window.innerWidth * 3;
-		//   y = 3 - (y / window.innerHeight) * 3;
-		//   let positions = {
-		//     left: balls.left.position,
-		//     right: balls.right.position
-		//   }
-		//   positions[currentSelection].x = x;
-		//   positions[currentSelection].y = y;
-		//   changeKillerBallPosition(positions.left,positions.right);
-		// });
 
 	}
 
