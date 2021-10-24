@@ -1,10 +1,9 @@
-import "./App.css";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
 import { io } from "socket.io-client";
 import { useEffect } from "react";
-import { onWindowResize, animate, initialise } from "./utils/setup.js"
+import { onWindowResize, animate, initialise } from "../utils/setup.js"
 
 
 function App() {
@@ -146,7 +145,7 @@ function App() {
 		scene.background = new THREE.Color(0x000000);
 
 		// Create a camera and set its position and add it to the scene
-		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10);
+		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
 		camera.position.set(0, 1.6, 3);
 		scene.add(camera);
 
