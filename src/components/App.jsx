@@ -1,6 +1,7 @@
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
 import { io } from "socket.io-client";
@@ -182,7 +183,8 @@ function App() {
 		renderer.outputEncoding = THREE.sRGBEncoding;
 		renderer.xr.enabled = true;
 		container.appendChild(renderer.domElement);
-
+		let controls = OrbitControls(camera,renderer.domElement);
+		controls.update();
 		window.addEventListener("resize", () => { onWindowResize(); });
 
 		document.body.appendChild(VRButton.createButton(renderer));
