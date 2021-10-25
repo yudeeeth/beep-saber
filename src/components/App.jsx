@@ -1,9 +1,12 @@
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
+import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
 import { io } from "socket.io-client";
 import { useEffect } from "react";
-import { onWindowResize, animate, initialise } from "../utils/setup.js"
+import { onWindowResize, animate, initialise, render } from "../utils/setup.js"
+import { makeMenu } from "../utils/menu.js";
 
 
 function App() {
@@ -23,7 +26,7 @@ function App() {
 			extraHeaders: {
 				"my-custom-header": "abcd"
 			}
-		});;
+		});
 
 		socket.on("connect", () => {
 			console.log("Connected to", socket.id);
@@ -52,7 +55,7 @@ function App() {
 			positions[index].y = y;
 		}
 		else {
-			positions[index].z = x - 3 ;
+			positions[index].z = x - 3;
 			positions[index].y = y;
 		}
 		changeBallsPositions(positions);
@@ -131,6 +134,21 @@ function App() {
 		}
 	}
 
+	const loadModel = async () => {
+		let loader = new OBJLoader();
+
+		let obj = await loader.loadAsync( './assets/building.obj');
+		// obj.traverse(function(child) {
+		// 	if (child instanceof THREE.Mesh) {
+		// 		child.material.color = 0xffb830;
+		// 	}
+		// });
+		obj.position.set(1,1,1);
+		// add to scene
+		scene.add( obj.scene );
+		renderer.render(scene,camera);
+	};
+
 	init();
 	initialise(renderer, camera, room, balls, scene, clock);
 	animate();
@@ -146,9 +164,11 @@ function App() {
 
 		// Create a camera and set its position and add it to the scene
 		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
-		camera.position.set(0, 1.6, 3);
+		camera.position.set(0, 1.5, 3);
 		scene.add(camera);
 
+		makeMenu(scene, renderer);
+		loadModel();
 		createRoom();
 
 		//major refactoring needed for spawn object and spawn balls

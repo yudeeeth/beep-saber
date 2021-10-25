@@ -1,3 +1,6 @@
+import ThreeMeshUI from 'three-mesh-ui';
+import { updateButtons } from './menu.js';
+
 let renderer,camera,room,balls,scene,clock;
 
 function initialise(_renderer,_camera,_room,_balls,_scene,_clock){
@@ -41,9 +44,9 @@ const handleCollisions = () => {
 // called every frame
 function render() {
     const delta = clock.getDelta() * 60;
-
+    ThreeMeshUI.update();
     handleCollisions(room);
-
+    updateButtons(scene,renderer,camera,balls);
     for (let i = 0; i < room.children.length; i++) {
         const cube = room.children[i];
         if (cube.userData.objectType === "obstacle") {
@@ -58,4 +61,4 @@ function render() {
     renderer.render(scene, camera);
 }
 
-module.exports = { onWindowResize, animate, handleCollisions, render , initialise};
+export { onWindowResize, animate, handleCollisions, render , initialise};
