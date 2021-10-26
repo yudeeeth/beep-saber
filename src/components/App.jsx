@@ -76,7 +76,7 @@ function App() {
 			transparent:true,
 		});
 		room = new THREE.LineSegments(
-			new BoxLineGeometry(3, 3, 30, 1, 1, 1).translate(0, 1.5, 0),
+			new BoxLineGeometry(3, 3, 30,4,4,40).translate(0, 1.5, 0),
 			material
 		);
 		scene.add(room);

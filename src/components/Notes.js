@@ -12,7 +12,7 @@ let redCubeObj,blueCubeObj, blueArrowObj;
 const spawnObjectCallbacks = (room,notes,i,bpm=150,time = 4) => {
     const convertToTime = 60/150;
     if(i==0)
-    setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(((notes[i]["_time"] * convertToTime) - 23 )*1000));
+    setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(((notes[i]["_time"] * convertToTime)  )*1000));
     else{
         setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(( (notes[i]["_time"] - notes[i-1]["_time"]) * convertToTime )*1000));
     }
@@ -76,13 +76,22 @@ const getAngle = (direction) =>{
     return dict[direction];
 }
 
+const setPosition = (object, notes) => {
+    let row = notes["_lineLayer"];
+    let column = notes["_lineIndex"];
+    object.position.x = -9/8 + column*3/4;
+    object.position.y = 21/8 - row*3/4;
+}
+
+
 function makeCube(room, notes,i){
     let object = notes[i]["_type"]%2? redCubeObj.clone(): blueCubeObj.clone();
     let side = 0.25;
     object.scale.set(side,side,side);
 
-    object.position.x = Math.random() * 3 - 1.5;
-    object.position.y = Math.random() * 3;
+    setPosition(object,notes[i]);
+    // object.position.x = Math.random() * 3 - 1.5;
+    // object.position.y = Math.random() * 3;
     object.position.z = -15;
     object.userData.velocity = new THREE.Vector3();
     object.userData.objectType = 'obstacle';
@@ -104,7 +113,8 @@ const startspawn = async (room) => {
     spawnObjectCallbacks(room,notes,0);
     audio = new Audio(sound);
     await loadModel();
-    // audio.play();
+    // room.add(blueCubeObj);
+    audio.play();
 }
 
 
