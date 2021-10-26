@@ -8,7 +8,8 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render } from "../utils/setup.js"
 import { makeMenu } from "../utils/menu.js";
-
+import { loadsong, startspawn } from "./Notes";
+import model from "../assets/building.obj";
 
 function App() {
 	// globals
@@ -84,28 +85,6 @@ function App() {
 		scene.add(light);
 	}
 
-	const createCube = (geometry) => {
-		const object = new THREE.Mesh(
-			geometry,
-			new THREE.MeshLambertMaterial({ color: Math.random() > 0.5 ? 0xFF0000 : 0x0000FF })
-		);
-
-		object.userData.velocity = new THREE.Vector3();
-		object.userData.objectType = 'obstacle';
-
-		object.position.x = Math.random() * 3 - 1.5;
-		object.position.y = Math.random() * 3;
-		object.position.z = -15;
-
-		object.userData.velocity.z = 0.05;
-		return object;
-	}
-
-	const spawnObjectsAtIntervals = (geometry, interval) => {
-		spawnObjectInterval = setInterval(() => {
-			room.add(createCube(geometry));
-		}, interval);
-	}
 
 	const createBalls = () => {
 		let arr = ['left', 'right'];
@@ -138,21 +117,19 @@ function App() {
 	const loadModel = async () => {
 		let loader = new OBJLoader();
 
-		let obj = await loader.loadAsync( './assets/building.obj');
-		// obj.traverse(function(child) {
-		// 	if (child instanceof THREE.Mesh) {
-		// 		child.material.color = 0xffb830;
-		// 	}
-		// });
+		let obj = await loader.loadAsync( model);
+
 		obj.position.set(1,1,1);
 		// add to scene
-		scene.add( obj.scene );
+		room.add( obj );
 		renderer.render(scene,camera);
 	};
 
 	init();
 	initialise(renderer, camera, room, balls, scene, clock);
 	animate();
+	loadsong();
+	startspawn(room);
 
 	function init() {
 		// Make a container and append it to the body
@@ -168,13 +145,14 @@ function App() {
 		camera.position.set(0, 1.5, 3);
 		scene.add(camera);
 
-		makeMenu(scene, renderer);
+		// makeMenu(scene, renderer);
 		loadModel();
 		createRoom();
 
 		//major refactoring needed for spawn object and spawn balls
-		spawnObjectsAtIntervals(new THREE.BoxGeometry(0.5, 0.5, 0.5), 1000);
+		// spawnObjectsAtIntervals(new THREE.BoxGeometry(0.5, 0.5, 0.5));
 		createBalls();
+		
 
 		// Create a renderer and set its size and exanble xr and add it to the container
 		renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -183,7 +161,7 @@ function App() {
 		renderer.outputEncoding = THREE.sRGBEncoding;
 		renderer.xr.enabled = true;
 		container.appendChild(renderer.domElement);
-		let controls = OrbitControls(camera,renderer.domElement);
+		let controls = new OrbitControls(camera,renderer.domElement);
 		controls.update();
 		window.addEventListener("resize", () => { onWindowResize(); });
 
