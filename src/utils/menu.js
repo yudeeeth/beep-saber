@@ -37,6 +37,28 @@ const makeMenu = (scene,renderer, options) => {
     scene.add(vrUI);
 };
 
+function makePlayerPlatform(scene) {
+	let panel = new ThreeMeshUI.Block({
+		width: 2,
+		height: 2,
+		fontSize: 0.055,
+		justifyContent: 'center',
+		alignContent: 'center',
+		fontFamily: FontJSON,
+		fontTexture: FontImage
+	});
+
+	panel.position.set( 0, -0.25, 1.5 );
+	panel.rotation.x = -Math.PI / 2;
+	scene.add( panel );
+
+	panel.set({
+		borderRadius: 0.1,
+		borderWidth: 0.05,
+		borderColor: new THREE.Color( 1, 0.5, 1 )
+	});
+};
+
 const makebutton = (scene,vrUI)=>{
     const buttonOptions = {
 		width: 0.4,
@@ -193,4 +215,4 @@ function raycast() {
 
 };
 
-export { makeMenu, updateButtons };
+export { makeMenu, updateButtons,makePlayerPlatform };

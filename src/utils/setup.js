@@ -1,7 +1,11 @@
 import ThreeMeshUI from 'three-mesh-ui';
+import * as THREE from "three";
 import { updateButtons } from './menu.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 
-let renderer,camera,room,balls,scene,clock;
+let renderer,camera,room,balls,scene,clock, composer, renderScene;
 
 function initialise(_renderer,_camera,_room,_balls,_scene,_clock){
     renderer = _renderer;
@@ -41,6 +45,18 @@ const handleCollisions = () => {
     }
 }
 
+const glowEffect = () => {
+    renderScene = new RenderPass( scene, camera );
+    const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+    bloomPass.threshold = 0;
+    bloomPass.strength = 0.5;
+    bloomPass.radius = 0;
+
+    composer = new EffectComposer( renderer );
+    composer.addPass( renderScene );
+    composer.addPass( bloomPass );
+}
+
 // called every frame
 function render() {
     const delta = clock.getDelta() * 60;
@@ -59,6 +75,7 @@ function render() {
     }
 
     renderer.render(scene, camera);
+    composer.render();
 }
 
-export { onWindowResize, animate, handleCollisions, render , initialise};
+export { onWindowResize, animate, glowEffect, handleCollisions, render , initialise};

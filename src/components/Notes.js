@@ -1,18 +1,25 @@
 import * as THREE from "three";
-// import song from "../assets/songs/Easy.js";
-import song from "../assets/songs/jojo/info.js";
-import sound from "../assets/songs/jojo/song.egg";
-
 import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import cubeModel from "../assets/cube.obj";
 import arrowModel from "../assets/arrow.obj";
 import tableModel from "../assets/new.glb";
-import tableMaterial from "../assets/table.mtl"
+import ThreeMeshUI from 'three-mesh-ui';
+import FontJSON from '../assets/Roboto-msdf.json';
+import FontImage from '../assets/Roboto-msdf.png';
+
+import song from "../assets/songs/Easy.js";
+import sound from "../assets/songs/song.ogg";
+
+// JOJOs song
+// import song from "../assets/songs/jojo/info.js";
+// import sound from "../assets/songs/jojo/song.egg";
+
 let notes;
 let audio;
 let loader = new OBJLoader();
+let textureLoader = new THREE.TextureLoader();
 let redCubeObj,blueCubeObj, blueArrowObj;
 let tableObjs = [];
 
@@ -73,27 +80,80 @@ const loadModel = async (room) => {
     let gltfLoader = new GLTFLoader();
     let purpleMaterial = new THREE.MeshLambertMaterial({ color: 0xFF00FF });
     let tableObj = await gltfLoader.loadAsync(tableModel);
-    tableObj = tableObj.scene;
+    tableObj = tableObj.scene;    
+    tableObj.children[0].children[0].userData.objectType = "platform";
     tableObj.scale.set(0.5,0.5,0.5);
+
+    let texture = textureLoader.load("./assets/black.jpg");
+    texture.encoding = THREE.sRGBEncoding;
+    texture.flipY = false;
+    let mat, geo;
     tableObj.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {
-            child.material = purpleMaterial;
+            mat = child.material;
+            geo = child.geometry;
+            mat.map = texture;
         }
     });
     tableObjs.push(tableObj);
-    // tableObj.position.y = -0.75;
-    // tableObj.rotation.y = - Math.PI / 4;
-    // tableObj.userData.objectType = 'table';
     tableObj.position.z = -7;
 
-    // // create a MTLLoader and load table.mtl and assign it to tableObj
-    // let mtlLoader = new GLTFLoader();
-    // let tableMtl = await mtlLoader.loadAsync( tableMaterial );
-    // tableMtl.preload();
-    
-    // tableObjs.push(tableObj);
-
 };
+
+const makeHUD = (scene) => {
+	const leftHud = new ThreeMeshUI.Block({
+        width: 0.8,
+        height: 1.5,
+        padding: 0.2,
+        fontFamily: FontJSON,
+        fontTexture: FontImage,
+    })
+    const leftUItext = new ThreeMeshUI.Text({
+        content: "Left Hud",
+        fontSize: 0.1
+    });
+    leftHud.position.set(-2.5, 0.5, -2);
+	leftHud.rotation.y = +0.55;
+    leftHud.add(leftUItext);
+
+	const rightHud = new ThreeMeshUI.Block({
+        width: 0.8,
+        height: 1.5,
+        padding: 0.1,
+        fontFamily: FontJSON,
+        fontTexture: FontImage,
+        justifyContent: 'end',
+    })
+    const rightUItext = new ThreeMeshUI.Text({
+        content: ``,
+        fontSize: 0.08,
+    });
+    rightHud.position.set(2.5, 0.5, -2);
+	rightHud.rotation.y = -0.55;
+    rightHud.add(rightUItext);
+
+    
+    setInterval(()=>{
+        if(audio!==undefined){
+            let currMins = Math.floor(audio.currentTime / 60);
+            let currSecs = Math.floor(audio.currentTime % 60);
+            let totalMins = Math.floor(audio.duration / 60);
+            let totalSecs = Math.floor(audio.duration % 60);
+
+            if(currSecs < 10) currSecs = "0" + currSecs;
+            if(currMins < 10) currMins = "0" + currMins;
+            if(totalSecs < 10) totalSecs = "0" + totalSecs;
+            if(totalMins < 10) totalMins = "0" + totalMins;
+
+            rightUItext.set({
+                content: `${currMins} : ${currSecs} / ${totalMins} : ${totalSecs}`
+            });
+        }
+    },1000);
+
+    scene.add(rightHud);
+    scene.add(leftHud);
+}
 
 const getAngle = (direction) =>{
     let dict = {
@@ -126,8 +186,6 @@ function makeCube(room, notes,i){
     object.scale.set(side,side,side);
 
     setPosition(object,notes[i]);
-    // object.position.x = Math.random() * 3 - 1.5;
-    // object.position.y = Math.random() * 3;
     object.position.z = -15;
     object.userData.velocity = new THREE.Vector3();
     object.userData.objectType = 'obstacle';
@@ -152,8 +210,10 @@ const startspawn = async (room) => {
     tableObjs.forEach(tableObj => {
         room.add(tableObj);
     });
-    // audio.play();
+    audio.play();
+    audio.volume = 0;
+    audio.loop = true;
 }
 
 
-export { loadsong, startspawn }
+export { makeHUD, loadsong, startspawn }

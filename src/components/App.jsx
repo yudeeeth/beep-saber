@@ -5,10 +5,9 @@ import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
 import { io } from "socket.io-client";
 import { useEffect } from "react";
-import { onWindowResize, animate, initialise, render } from "../utils/setup.js"
-import { makeMenu } from "../utils/menu.js";
-import { loadsong, startspawn } from "./Notes";
-import tableModel from "../assets/table.obj";
+import { onWindowResize, animate, initialise, render, glowEffect } from "../utils/setup.js"
+import { makeMenu, makePlayerPlatform } from "../utils/menu.js";
+import { makeHUD, loadsong, startspawn } from "./Notes";
 
 function App() {
 	// globals
@@ -70,19 +69,8 @@ function App() {
 	};
 
 	const createRoom = () => {
-		// Create a room with LineSegments and a box line geometry with line basic material and add it to the scene
-		// create a new transperent material
-		const material = new THREE.LineBasicMaterial({
-			color: 0x000000,
-			transparent:true,
-		});
-		room = new THREE.LineSegments(
-			new BoxLineGeometry(3, 3, 30,4,4,40).translate(0, 1.5, 0),
-			material
-		);
+		room = new THREE.Group();
 		scene.add(room);
-
-		// Add light to the scene
 		scene.add(new THREE.HemisphereLight(0x606060, 0x404040));
 
 		const light = new THREE.DirectionalLight(0xffffff);
@@ -121,6 +109,7 @@ function App() {
 
 	init();
 	initialise(renderer, camera, room, balls, scene, clock);
+	glowEffect();
 	animate();
 	loadsong();
 	startspawn(room);
@@ -133,7 +122,7 @@ function App() {
 		// Create a three js scene and set background color
 		scene = new THREE.Scene();
 
-		scene.fog = new THREE.FogExp2(0x000000, 0.1);
+		scene.fog = new THREE.FogExp2(0x000000, 0.05);
 
 		// Create a camera and set its position and add it to the scene
 		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -141,12 +130,13 @@ function App() {
 		scene.add(camera);
 
 		// makeMenu(scene, renderer);
+		makeHUD(scene, renderer);
 		createRoom();
+		makePlayerPlatform(scene, renderer);
 
 		//major refactoring needed for spawn object and spawn balls
 		// spawnObjectsAtIntervals(new THREE.BoxGeometry(0.5, 0.5, 0.5));
 		createBalls();
-		
 
 		// Create a renderer and set its size and exanble xr and add it to the container
 		renderer = new THREE.WebGLRenderer({ antialias: true });
