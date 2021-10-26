@@ -1,6 +1,5 @@
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry.js';
@@ -9,6 +8,7 @@ import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render } from "../utils/setup.js"
 import { makeMenu } from "../utils/menu.js";
 import { loadsong, startspawn } from "./Notes";
+import tableModel from "../assets/table.obj";
 
 function App() {
 	// globals
@@ -19,6 +19,7 @@ function App() {
 	let spawnObjectInterval;
 	let balls = {};
 	let roomcode = "beepbeep";
+	let loader = new OBJLoader();
 
 	// do once at the beginning
 	useEffect(() => {

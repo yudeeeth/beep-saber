@@ -1,0 +1,45 @@
+# Blender MTL File: 'nothing.blend'
+# Material Count: 4
+
+newmtl Material.002
+Ns 323.999994
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.003
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.023279 0.023279 0.023279
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/yudeeeth/Applications/blender/Downloads/TexturesCom_Concrete_BrickWall_1K_albedo.tif
+map_Ns /home/yudeeeth/Applications/blender/Downloads/TexturesCom_Concrete_BrickWall_1K_roughness.tif
+
+newmtl Material.004
+Ns 143.999983
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump /home/yudeeeth/Applications/blender/Downloads/TexturesCom_Metal_SteelScratched_1K_normal.tif
+
+newmtl Material.006
+Ns 323.999994
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2

@@ -1,18 +1,27 @@
 import * as THREE from "three";
-import song from "../assets/songs/Easy.js";
+// import song from "../assets/songs/Easy.js";
+import song from "../assets/songs/jojo/info.js";
+import sound from "../assets/songs/jojo/song.egg";
+
 import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import cubeModel from "../assets/cube.obj";
 import arrowModel from "../assets/arrow.obj";
-import sound from "../assets/songs/song.ogg";
+import tableModel from "../assets/table.obj";
+import tableMaterial from "../assets/table.mtl"
 let notes;
 let audio;
 let loader = new OBJLoader();
 let redCubeObj,blueCubeObj, blueArrowObj;
+let tableObjs = [];
 
 const spawnObjectCallbacks = (room,notes,i,bpm=150,time = 4) => {
-    const convertToTime = 60/150;
+    const convertToTime = 60/135;
     if(i==0)
-    setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(((notes[i]["_time"] * convertToTime)  )*1000));
+    setTimeout( ()=>{makeCube(room,notes,i) }, (
+        Math.floor(
+            ((notes[i]["_time"] * convertToTime)
+        ))*1000));
     else{
         setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(( (notes[i]["_time"] - notes[i-1]["_time"]) * convertToTime )*1000));
     }
@@ -59,19 +68,34 @@ const loadModel = async (room) => {
     
     blueCubeObj.add(blueArrowObj);
     redCubeObj.add(redArrowObj);
+
+    let tableObj = await loader.loadAsync(tableModel);
+    tableObj.scale.set(0.0003,0.00015,0.0003);
+    tableObj.position.y = -0.75;
+    tableObj.rotation.y = - Math.PI / 4;
+    tableObj.userData.objectType = 'table';
+    tableObj.position.z = -7;
+
+    // create a MTLLoader and load table.mtl and assign it to tableObj
+    let mtlLoader = new MTLLoader();
+    let tableMtl = await mtlLoader.loadAsync( tableMaterial );
+    tableMtl.preload();
+    
+    tableObjs.push(tableObj);
+
 };
 
 const getAngle = (direction) =>{
     let dict = {
-        0 : 0,
-        1: Math.PI,
+        0 : Math.PI,
+        1: 0,
         2: Math.PI/2,
         3: -Math.PI/2,
         4: 3 * Math.PI / 4 ,
         5: - 3 * Math.PI / 4,
         6: Math.PI / 4,
         7: -Math.PI/4,
-        8: 0
+        8: Math.PI
     }
     return dict[direction];
 }
@@ -80,11 +104,13 @@ const setPosition = (object, notes) => {
     let row = notes["_lineLayer"];
     let column = notes["_lineIndex"];
     object.position.x = -9/8 + column*3/4;
-    object.position.y = 21/8 - row*3/4;
+    object.position.y = 6/8 + row*3/4;
 }
 
 
 function makeCube(room, notes,i){
+    if(redCubeObj === undefined || blueCubeObj === undefined)
+        return;
     let object = notes[i]["_type"]%2? redCubeObj.clone(): blueCubeObj.clone();
     let side = 0.25;
     object.scale.set(side,side,side);
@@ -113,8 +139,10 @@ const startspawn = async (room) => {
     spawnObjectCallbacks(room,notes,0);
     audio = new Audio(sound);
     await loadModel();
-    // room.add(blueCubeObj);
-    audio.play();
+    tableObjs.forEach(tableObj => {
+        room.add(tableObj);
+    });
+    // audio.play();
 }
 
 
