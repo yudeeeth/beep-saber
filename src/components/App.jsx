@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render } from "../utils/setup.js"
 import { makeMenu } from "../utils/menu.js";
 import { loadsong, startspawn } from "./Notes";
-import model from "../assets/building.obj";
 
 function App() {
 	// globals
@@ -71,9 +70,14 @@ function App() {
 
 	const createRoom = () => {
 		// Create a room with LineSegments and a box line geometry with line basic material and add it to the scene
+		// create a new transperent material
+		const material = new THREE.LineBasicMaterial({
+			color: 0xffffff,
+			transparent:true,
+		});
 		room = new THREE.LineSegments(
-			new BoxLineGeometry(3, 3, 30, 6, 6, 15).translate(0, 1.5, 0),
-			new THREE.LineBasicMaterial({ color: 0x808080 })
+			new BoxLineGeometry(3, 3, 30, 1, 1, 1).translate(0, 1.5, 0),
+			material
 		);
 		scene.add(room);
 
@@ -114,17 +118,6 @@ function App() {
 		}
 	}
 
-	const loadModel = async () => {
-		let loader = new OBJLoader();
-
-		let obj = await loader.loadAsync( model);
-
-		obj.position.set(1,1,1);
-		// add to scene
-		room.add( obj );
-		renderer.render(scene,camera);
-	};
-
 	init();
 	initialise(renderer, camera, room, balls, scene, clock);
 	animate();
@@ -138,7 +131,8 @@ function App() {
 
 		// Create a three js scene and set background color
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color(0x000000);
+
+		scene.fog = new THREE.FogExp2(0x000000, 0.1);
 
 		// Create a camera and set its position and add it to the scene
 		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -146,7 +140,6 @@ function App() {
 		scene.add(camera);
 
 		// makeMenu(scene, renderer);
-		loadModel();
 		createRoom();
 
 		//major refactoring needed for spawn object and spawn balls
