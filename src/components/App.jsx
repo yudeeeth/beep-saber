@@ -73,7 +73,7 @@ function App() {
 		// Create a room with LineSegments and a box line geometry with line basic material and add it to the scene
 		// create a new transperent material
 		const material = new THREE.LineBasicMaterial({
-			color: 0xffffff,
+			color: 0x000000,
 			transparent:true,
 		});
 		room = new THREE.LineSegments(

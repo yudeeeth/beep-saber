@@ -5,9 +5,10 @@ import sound from "../assets/songs/jojo/song.egg";
 
 import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import cubeModel from "../assets/cube.obj";
 import arrowModel from "../assets/arrow.obj";
-import tableModel from "../assets/table.obj";
+import tableModel from "../assets/new.glb";
 import tableMaterial from "../assets/table.mtl"
 let notes;
 let audio;
@@ -69,19 +70,28 @@ const loadModel = async (room) => {
     blueCubeObj.add(blueArrowObj);
     redCubeObj.add(redArrowObj);
 
-    let tableObj = await loader.loadAsync(tableModel);
-    tableObj.scale.set(0.0003,0.00015,0.0003);
-    tableObj.position.y = -0.75;
-    tableObj.rotation.y = - Math.PI / 4;
-    tableObj.userData.objectType = 'table';
+    let gltfLoader = new GLTFLoader();
+    let purpleMaterial = new THREE.MeshLambertMaterial({ color: 0xFF00FF });
+    let tableObj = await gltfLoader.loadAsync(tableModel);
+    tableObj = tableObj.scene;
+    tableObj.scale.set(0.5,0.5,0.5);
+    tableObj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+            child.material = purpleMaterial;
+        }
+    });
+    tableObjs.push(tableObj);
+    // tableObj.position.y = -0.75;
+    // tableObj.rotation.y = - Math.PI / 4;
+    // tableObj.userData.objectType = 'table';
     tableObj.position.z = -7;
 
-    // create a MTLLoader and load table.mtl and assign it to tableObj
-    let mtlLoader = new MTLLoader();
-    let tableMtl = await mtlLoader.loadAsync( tableMaterial );
-    tableMtl.preload();
+    // // create a MTLLoader and load table.mtl and assign it to tableObj
+    // let mtlLoader = new GLTFLoader();
+    // let tableMtl = await mtlLoader.loadAsync( tableMaterial );
+    // tableMtl.preload();
     
-    tableObjs.push(tableObj);
+    // tableObjs.push(tableObj);
 
 };
 
