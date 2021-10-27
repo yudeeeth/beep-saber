@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/beep-saber/static/js/main.8811556b.chunk.js",
+    "main.js": "/beep-saber/static/js/main.cde499f6.chunk.js",
     "runtime-main.js": "/beep-saber/static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.ce6c04b4.chunk.js": "/beep-saber/static/js/2.ce6c04b4.chunk.js",
+    "static/js/2.1a8f78a9.chunk.js": "/beep-saber/static/js/2.1a8f78a9.chunk.js",
     "index.html": "/beep-saber/index.html",
-    "static/js/2.ce6c04b4.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.ce6c04b4.chunk.js.LICENSE.txt",
+    "static/js/2.1a8f78a9.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.1a8f78a9.chunk.js.LICENSE.txt",
     "static/media/HitSound.2dc20224.ogg": "/beep-saber/static/media/HitSound.2dc20224.ogg",
     "static/media/Roboto-msdf.6aad3506.png": "/beep-saber/static/media/Roboto-msdf.6aad3506.png",
     "static/media/arrow.a13512c7.obj": "/beep-saber/static/media/arrow.a13512c7.obj",
@@ -14,7 +14,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.ce6c04b4.chunk.js",
-    "static/js/main.8811556b.chunk.js"
+    "static/js/2.1a8f78a9.chunk.js",
+    "static/js/main.cde499f6.chunk.js"
   ]
 }
