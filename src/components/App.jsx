@@ -87,11 +87,13 @@ function App() {
 				new THREE.SphereGeometry(0.2, 16, 8),
 				new THREE.MeshLambertMaterial({ color: i === 0 ? 0xFF0000 : 0x0000FF })
 			);
-			object.position.x = 0;
-			object.position.y = 1.5;
-			object.position.z = -1;
 			object.userData.objectType = 'killerBall';
 			object.userData.color = i === 0? "red": "blue";
+			if(i)
+				object.position.x = -1;
+			else
+				object.position.x = 1;
+			object.position.y = 0.5;
 			object.userData.radius = 0.2;
 			room.add(object);
 			balls[arr[i]] = object;
@@ -110,13 +112,17 @@ function App() {
 		}
 	}
 
-	init();
-	initialise({renderer, camera, room, balls, scene, clock, scoreInfo});
-	// glowEffect();
-	animate();
-	loadsong();
-	startspawn(room);
+	const callAllFunctions = async () => {
+		await loadsong();
+		init();
+		initialise({renderer, camera, room, balls, scene, clock, scoreInfo});
+		// glowEffect();
+		animate();
+		startspawn(room);	
+	}
 
+	callAllFunctions();
+		
 	function init() {
 		// Make a container and append it to the body
 		container = document.createElement("div");
@@ -125,33 +131,12 @@ function App() {
 		// Create a three js scene and set background color
 		scene = new THREE.Scene();
 
-		scene.fog = new THREE.FogExp2(0x000000, 0.05);
+		scene.fog = new THREE.FogExp2(0x000000, 0.035);
 
 		// Create a camera and set its position and add it to the scene
 		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
 		camera.position.set(0, 1.5, 3);
 		scene.add(camera);
-
-		let sideOptions = {
-			left:{
-				position: {x: -2.5, y: 0.5, z: 0},
-				rotation: {x: 0,y: 0.55,z: 0},
-				style: {
-					width: 0.8,
-					height: 1.5,
-					padding: 0.1,
-				}
-			}, 
-			right:{
-				position: { x: 2.5, y: 0.5, z: 0},
-				rotation: { x: 0, y: -0.55, z: 0},
-				style: {
-					width: 0.8,
-					height: 1.5,
-					padding: 0.1,
-				}
-			}
-		};
 
 		let topOptions = {
 			left:{
@@ -168,7 +153,7 @@ function App() {
 				rotation: { x: 0.45, y: 0, z: 0.2},
 				style: {
 					width: 1.5,
-					height: 0.8,
+					height: 1.25,
 					padding: 0.1,
 				}
 			}

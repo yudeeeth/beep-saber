@@ -44,11 +44,10 @@ function render() {
     for (let i = 0; i < state.room.children.length; i++) {
         const cube = state.room.children[i];
         if (cube.userData.objectType === "obstacle") {
-            cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
             cube.position.add(cube.userData.velocity);
             if (cube.position.z > 4) {
                 // set state.combo
-                // state.combo = 0;
+                // state.combo = 1;
                 state.room.remove(cube);
             }
         }

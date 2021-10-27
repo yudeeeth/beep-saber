@@ -9,28 +9,37 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
 
-import song from "../assets/songs/Easy.js";
-import sound from "../assets/songs/song.ogg";
+// homura song
+import sound from "../assets/songs/homura/song.egg";
+import homuraSong from "../assets/songs/homura/HardStandard.dat";
+import homuraInfo from "../assets/songs/homura/Info.dat";
+import homuraImage from "../assets/songs/homura/cover.jpg";
 
-// JOJOs song
-// import song from "../assets/songs/jojo/info.js";
-// import sound from "../assets/songs/jojo/song.egg";
-
-let notes;
-let audio;
+let notes, audio, song;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
 let redCubeObj,blueCubeObj, blueArrowObj;
 let tableObjs = [];
-let scoreText, comboText2;
+let scoreText, comboText2, songBar, rightUItext;
+
+const readSongFiles = async (songInfo,songData) => {
+    let infoFile = await fetch(songInfo);
+    const infoText = await infoFile.text();
+    const infoJSON = JSON.parse(infoText);
+
+    let songFile = await fetch(songData);
+    const songText = await songFile.text();
+    const songJSON = JSON.parse(songText);
+    song = {...infoJSON, ...songJSON};
+}
 
 const spawnObjectCallbacks = (room,notes,i,bpm=150,time = 4) => {
-    const convertToTime = 60/135;
+    const convertToTime = 60/song['_beatsPerMinute'];
     if(i==0)
-    setTimeout( ()=>{makeCube(room,notes,i) }, (
-        Math.floor(
-            ((notes[i]["_time"] * convertToTime)
-        ))*1000));
+        setTimeout( ()=>{makeCube(room,notes,i) }, (
+            Math.floor(
+                ((notes[i]["_time"] * convertToTime)
+            ))*1000));
     else{
         setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(( (notes[i]["_time"] - notes[i-1]["_time"]) * convertToTime )*1000));
     }
@@ -125,6 +134,29 @@ const updateScore = (scoreInfo) => {
         content: `${scoreInfo.combo}`,
         fontSize: 0.25
     });
+    
+}
+
+const updateSong = () => {
+    let currMins = Math.floor(audio.currentTime / 60);
+    let currSecs = Math.floor(audio.currentTime % 60);
+    let totalMins = Math.floor(audio.duration / 60);
+    let totalSecs = Math.floor(audio.duration % 60);
+
+    if(currSecs < 10) currSecs = "0" + currSecs;
+    if(currMins < 10) currMins = "0" + currMins;
+    if(totalSecs < 10) totalSecs = "0" + totalSecs;
+    if(totalMins < 10) totalMins = "0" + totalMins;
+
+    rightUItext.set({
+        content: `${currMins} : ${currSecs} / ${totalMins} : ${totalSecs}`
+    });
+
+    let progressPercentage = audio.currentTime / audio.duration;
+    let progressWidth = 0.5 + 0.75 * progressPercentage;
+    songBar.set({
+        width: progressWidth,
+    });
 }
 
 const makeHUD = (scene,options,scoreInfo) => {
@@ -135,6 +167,7 @@ const makeHUD = (scene,options,scoreInfo) => {
         fontFamily: FontJSON,
         fontTexture: FontImage,
         padding: 0.2,
+        borderRadius: 0.2,
     });
     leftHud.position.set(options.left.position.x,options.left.position.y,options.left.position.z);
     leftHud.rotation.set(options.left.rotation.x,options.left.rotation.y,options.left.rotation.z);
@@ -154,8 +187,6 @@ const makeHUD = (scene,options,scoreInfo) => {
         fontTexture: FontImage,
         justifyContent: 'center',
         alignContent: 'center',
-    });
-    comboSection.set({
 		borderRadius: 0.3,
 		borderWidth: 0.03,
 		borderColor: new THREE.Color( 1, 0.5, 1 )
@@ -182,34 +213,88 @@ const makeHUD = (scene,options,scoreInfo) => {
         width: options.right.style.width,
         height: options.right.style.height,
         padding: options.right.style.padding,
+        borderRadius: 0.2,
+    })
+    rightHud.position.set(options.right.position.x,options.right.position.y, options.right.position.z);
+    rightHud.rotation.set(options.right.rotation.x,options.right.rotation.y, options.right.rotation.z);
+
+    let songName = song['_songName'];
+    songName = songName.substring(0,15);
+    
+    const songNameSection = new ThreeMeshUI.Block({
+        width: 1.25,
+        height: 0.05,
+        fontFamily: FontJSON,
+        fontTexture: FontImage,
+        backgroundOpacity: 0,
+        padding: 0.05,
+    });
+
+    const songNameText = new ThreeMeshUI.Text({
+        content: `${songName}`,
+        fontSize: 0.1,
+    });
+
+    const songCover = new ThreeMeshUI.Block({
+        width:  0.70,
+        height: 0.70,
+        borderRadius:0,
+    });
+
+    new THREE.TextureLoader().load(homuraImage, (texture) => {
+        songCover.set({
+            backgroundTexture: texture,
+            backgroundOpacity: 0.7,
+        });
+    });
+    
+    songNameSection.add(songNameText);
+    rightHud.add(songCover);
+    rightHud.add(songNameSection);
+
+    const songBGBar = new ThreeMeshUI.Block({
+        width: 1.25,
+        height: 0.015,
+        borderRadius: 0.3,
+		borderWidth: 0.03,
+		borderColor: new THREE.Color( 1, 1, 1 ),
+        alignContent: 'left'
+    });
+    songBGBar.autoLayout = false;
+    songBGBar.position.set(0,-0.4,0);
+    rightHud.add(songBGBar);
+
+    let progressPercentage = 0;
+    let progressWidth = 0.5 + 0.75 * progressPercentage;
+
+    songBar = new ThreeMeshUI.Block({
+        width: progressWidth,
+        height: 0.015,
+        borderRadius: 0.3,
+		borderWidth: 0.03,
+		borderColor: new THREE.Color( 92/255, 202/255, 255/255 ),
+    });
+
+    songBGBar.add(songBar);
+
+    const songTextSection = new ThreeMeshUI.Block({
+        width : options.right.style.width,
+        height: 0.3,
         fontFamily: FontJSON,
         fontTexture: FontImage,
         justifyContent: 'end',
-    })
-    const rightUItext = new ThreeMeshUI.Text({
-        content: ``,
-        fontSize: 0.08,
+        backgroundOpacity: 0,
     });
-    rightHud.position.set(options.right.position.x,options.right.position.y, options.right.position.z);
-    rightHud.rotation.set(options.right.rotation.x,options.right.rotation.y, options.right.rotation.z);
-    rightHud.add(rightUItext);
+    rightUItext = new ThreeMeshUI.Text({
+        content: ``,
+        fontSize: 0.1,
+    });
+    songTextSection.add(rightUItext);
+    rightHud.add(songTextSection);
 
-    
     setInterval(()=>{
         if(audio!==undefined){
-            let currMins = Math.floor(audio.currentTime / 60);
-            let currSecs = Math.floor(audio.currentTime % 60);
-            let totalMins = Math.floor(audio.duration / 60);
-            let totalSecs = Math.floor(audio.duration % 60);
-
-            if(currSecs < 10) currSecs = "0" + currSecs;
-            if(currMins < 10) currMins = "0" + currMins;
-            if(totalSecs < 10) totalSecs = "0" + totalSecs;
-            if(totalMins < 10) totalMins = "0" + totalMins;
-
-            rightUItext.set({
-                content: `${currMins} : ${currSecs} / ${totalMins} : ${totalSecs}`
-            });
+            updateSong();
         }
     },1000);
 
@@ -319,7 +404,7 @@ function makeCube(room, notes,i){
     object.scale.set(side,side,side);
 
     setPosition(object,notes[i]);
-    object.position.z = -15;
+    object.position.z = -25;
     object.userData.velocity = new THREE.Vector3();
     object.userData.objectType = 'obstacle';
     object.userData.radius =  Math.sqrt(3) * side;
@@ -334,18 +419,22 @@ function makeCube(room, notes,i){
     room.add(object);
 }
 
-const loadsong = ()=>{
+const loadsong = async ()=>{
+    await readSongFiles(homuraInfo,homuraSong);
     notes = song["_notes"];
 }
 
 const startspawn = async (room) => {
+    const convertToTime = 60/song['_beatsPerMinute'];
     spawnObjectCallbacks(room,notes,0);
     audio = new Audio(sound);
     await loadModels();
     tableObjs.forEach(tableObj => {
         room.add(tableObj);
     });
-    audio.play();
+    setTimeout(()=>{
+        audio.play();
+    },0.6 * 1000);
     audio.loop = true;
 }
 
