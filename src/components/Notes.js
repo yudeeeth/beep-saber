@@ -192,7 +192,9 @@ function makeCube(room, notes,i){
     object.userData.radius =  Math.sqrt(3) * side;
     object.userData.color = notes[i]["_type"]%2? "red":"blue";
     object.rotation.y += getAngle(notes[i]["_cutDirection"]);
+    object.userData.direction = notes[i]["_cutDirection"];
     object.userData.velocity.z = 0.2;
+    object.userData.index = i;
     i++;
     if(i<notes.length)
     spawnObjectCallbacks(room, notes,i);

@@ -4,16 +4,19 @@ import { updateButtons } from './menu.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { handleCollisions } from "../components/collisiondetect.js";
 
-let renderer,camera,room,balls,scene,clock, composer, renderScene;
+let renderer,camera,room,balls,scene,clock, composer, renderScene,score, combo;
 
-function initialise(_renderer,_camera,_room,_balls,_scene,_clock){
+function initialise(_renderer,_camera,_room,_balls,_scene,_clock,_score,_combo){
     renderer = _renderer;
     camera = _camera;
     room = _room;
     balls = _balls;
     scene = _scene;
     clock = _clock;
+    score = _score;
+    combo = _combo;
 }
 
 function onWindowResize() {
@@ -24,25 +27,6 @@ function onWindowResize() {
 
 function animate() {
     renderer.setAnimationLoop(()=>{render();});
-}
-
-const handleCollisions = () => {
-    for (let i = 0; i < room.children.length; i++) {
-        if (room.children[i].userData.objectType === "obstacle") {
-            const cube = room.children[i];
-            for (let prop in balls) {
-                let dist;
-                if (cube.userData !== null && balls[prop].geometry.boundingSphere !== null) {
-                    dist = Math.pow(cube.userData.radius, 2) + Math.pow(balls[prop].geometry.boundingSphere.radius, 2);
-                }
-                if (cube.position.distanceToSquared(balls[prop].position) < dist) {
-                    console.log('collision');
-                    // add collision animation here
-                    room.remove(cube);
-                }
-            }
-        }
-    }
 }
 
 const glowEffect = () => {
@@ -61,14 +45,16 @@ const glowEffect = () => {
 function render() {
     const delta = clock.getDelta() * 60;
     ThreeMeshUI.update();
-    handleCollisions(room);
+    handleCollisions(room,balls,score,combo);
     updateButtons(scene,renderer,camera,balls);
     for (let i = 0; i < room.children.length; i++) {
         const cube = room.children[i];
         if (cube.userData.objectType === "obstacle") {
             cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
             cube.position.add(cube.userData.velocity);
-            if (cube.position.z > 7.5) {
+            if (cube.position.z > 4) {
+                // set combo
+                // combo = 0;
                 room.remove(cube);
             }
         }

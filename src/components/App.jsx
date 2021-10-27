@@ -19,6 +19,8 @@ function App() {
 	let balls = {};
 	let roomcode = "beepbeep";
 	let loader = new OBJLoader();
+	let score = 0;
+	let combo = 1;
 
 	// do once at the beginning
 	useEffect(() => {
@@ -90,6 +92,8 @@ function App() {
 			object.position.y = 1.5;
 			object.position.z = -1;
 			object.userData.objectType = 'killerBall';
+			object.userData.color = i === 0? "red": "blue";
+			object.userData.radius = 0.2;
 			room.add(object);
 			balls[arr[i]] = object;
 		}
