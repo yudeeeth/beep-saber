@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/beep-saber/static/js/main.0e376c9b.chunk.js",
+    "main.js": "/beep-saber/static/js/main.b4b6814f.chunk.js",
     "runtime-main.js": "/beep-saber/static/js/runtime-main.e6a0ec35.js",
     "static/js/2.53110160.chunk.js": "/beep-saber/static/js/2.53110160.chunk.js",
     "index.html": "/beep-saber/index.html",
@@ -14,6 +14,6 @@
   "entrypoints": [
     "static/js/runtime-main.e6a0ec35.js",
     "static/js/2.53110160.chunk.js",
-    "static/js/main.0e376c9b.chunk.js"
+    "static/js/main.b4b6814f.chunk.js"
   ]
 }
