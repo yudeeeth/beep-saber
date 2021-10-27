@@ -217,6 +217,77 @@ const makeHUD = (scene,options,scoreInfo) => {
     scene.add(leftHud);
 }
 
+const makeLasers = (scene,options) => {
+    let rightLasers = [];
+    let leftLasers = [];
+    for(let i=0;i<5;i++){
+        rightLasers.push(new ThreeMeshUI.Block({
+            width: 0.1,
+            height: 40,
+            borderWidth: 0.04,
+            borderColor : new THREE.Color(92/255,202/255,1),
+            backgroundColor: new THREE.Color(1,1,1)
+        }));
+        rightLasers[i].position.set(10,Math.sqrt(3)*5,-i*5-3);
+        rightLasers[i].rotation.set(0,0,-Math.PI/6);
+        scene.add(rightLasers[i]);
+        leftLasers.push(new ThreeMeshUI.Block({
+            width: 0.1,
+            height: 40,
+            borderWidth: 0.04,
+            borderColor : new THREE.Color(92/255,202/255,1),
+            backgroundColor: new THREE.Color(1,1,1)
+        }));
+        leftLasers[i].position.set(-10,Math.sqrt(3)*5,-i*5-3);
+        leftLasers[i].rotation.set(0,0,Math.PI/6);
+        scene.add(leftLasers[i]);
+    }
+    let redrightLasers = [];
+    let redleftLasers = [];
+    for(let i=0;i<5;i++){
+        redrightLasers.push(new ThreeMeshUI.Block({
+            width: 0.1,
+            height: 40,
+            borderWidth: 0.04,
+            borderColor : new THREE.Color(255/255,1/255,1/255),
+            backgroundColor: new THREE.Color(1,1,1)
+        }));
+        redrightLasers[i].position.set(-10,0,-i*5 -15);
+        redrightLasers[i].rotation.set(0,0,-Math.PI/6);
+        scene.add(redrightLasers[i]);
+        redleftLasers.push(new ThreeMeshUI.Block({
+            width: 0.1,
+            height: 40,
+            borderWidth: 0.04,
+            borderColor : new THREE.Color(255/255,1/255,1/255),
+            backgroundColor: new THREE.Color(1,1,1)
+        }));
+        redleftLasers[i].position.set(10,0,-i*5 -15);
+        redleftLasers[i].rotation.set(0,0,Math.PI/6);
+        scene.add(redleftLasers[i]);
+    }
+    let righthand = new ThreeMeshUI.Block({
+        width: 0.1,
+        height: 40,
+        borderWidth: 0.04,
+        borderColor : new THREE.Color(92/255,202/255,1),
+        backgroundColor: new THREE.Color(1,1,1)
+    });
+    righthand.position.set(1.45,0.1,0);
+    righthand.rotation.set(-Math.PI/2,0,0);
+    scene.add(righthand);
+    let lefthand = new ThreeMeshUI.Block({
+        width: 0.1,
+        height: 40,
+        borderWidth: 0.04,
+        borderColor : new THREE.Color(92/255,202/255,1),
+        backgroundColor: new THREE.Color(1,1,1)
+    });
+    lefthand.position.set(-1.45,0.1,0);
+    lefthand.rotation.set(-Math.PI/2,0,0);
+    scene.add(lefthand);
+}
+
 const getAngle = (direction) =>{
     let dict = {
         0 : Math.PI,
@@ -278,4 +349,4 @@ const startspawn = async (room) => {
     audio.loop = true;
 }
 
-export { makeHUD, loadsong, startspawn, updateScore }
+export { makeHUD, loadsong, startspawn, updateScore , makeLasers }

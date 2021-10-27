@@ -7,7 +7,7 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render, glowEffect } from "../utils/setup.js"
 import { makeMenu, makePlayerPlatform } from "../utils/menu.js";
-import { makeHUD, loadsong, startspawn } from "./Notes";
+import { makeHUD, loadsong, startspawn, makeLasers } from "./Notes";
 
 function App() {
 	// globals
@@ -176,6 +176,7 @@ function App() {
 
 		// makeMenu(scene, renderer);
 		makeHUD(scene,topOptions ,scoreInfo);
+		makeLasers(scene,topOptions);
 		createRoom();
 		makePlayerPlatform(scene, renderer);
 
