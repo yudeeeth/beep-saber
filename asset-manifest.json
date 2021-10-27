@@ -1,10 +1,11 @@
 {
   "files": {
-    "main.js": "/beep-saber/static/js/main.25caf611.chunk.js",
+    "main.js": "/beep-saber/static/js/main.b7c50559.chunk.js",
     "runtime-main.js": "/beep-saber/static/js/runtime-main.e6a0ec35.js",
     "static/js/2.f5cc9953.chunk.js": "/beep-saber/static/js/2.f5cc9953.chunk.js",
     "index.html": "/beep-saber/index.html",
     "static/js/2.f5cc9953.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.f5cc9953.chunk.js.LICENSE.txt",
+    "static/media/HitSound.2dc20224.ogg": "/beep-saber/static/media/HitSound.2dc20224.ogg",
     "static/media/Roboto-msdf.6aad3506.png": "/beep-saber/static/media/Roboto-msdf.6aad3506.png",
     "static/media/arrow.a13512c7.obj": "/beep-saber/static/media/arrow.a13512c7.obj",
     "static/media/cube.505574b6.obj": "/beep-saber/static/media/cube.505574b6.obj",
@@ -14,6 +15,6 @@
   "entrypoints": [
     "static/js/runtime-main.e6a0ec35.js",
     "static/js/2.f5cc9953.chunk.js",
-    "static/js/main.25caf611.chunk.js"
+    "static/js/main.b7c50559.chunk.js"
   ]
 }
