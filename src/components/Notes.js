@@ -22,6 +22,7 @@ let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
 let redCubeObj,blueCubeObj, blueArrowObj;
 let tableObjs = [];
+let scoreText, comboText2;
 
 const spawnObjectCallbacks = (room,notes,i,bpm=150,time = 4) => {
     const convertToTime = 60/135;
@@ -35,7 +36,7 @@ const spawnObjectCallbacks = (room,notes,i,bpm=150,time = 4) => {
     }
 }
 
-const loadModel = async (room) => {
+const loadBlueCube = async () => {
     let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
     blueCubeObj = await loader.loadAsync(cubeModel);
     blueCubeObj.material = blueMaterial;
@@ -45,7 +46,9 @@ const loadModel = async (room) => {
             child.material = blueMaterial;
         }
     });
-    
+}
+
+const loadRedCube = async () => {
     let redMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
     redCubeObj = await loader.loadAsync(cubeModel);
     redCubeObj.material = redMaterial;
@@ -55,7 +58,9 @@ const loadModel = async (room) => {
             child.material = redMaterial;
         }
     });
-    
+}
+
+const loadArrows = async () => {
     let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
     blueArrowObj = await loader.loadAsync(arrowModel);
     blueArrowObj.material = whiteMaterial;
@@ -76,9 +81,10 @@ const loadModel = async (room) => {
     
     blueCubeObj.add(blueArrowObj);
     redCubeObj.add(redArrowObj);
+}
 
+const loadTable = async (room) => {
     let gltfLoader = new GLTFLoader();
-    let purpleMaterial = new THREE.MeshLambertMaterial({ color: 0xFF00FF });
     let tableObj = await gltfLoader.loadAsync(tableModel);
     tableObj = tableObj.scene;    
     tableObj.children[0].children[0].userData.objectType = "platform";
@@ -101,29 +107,81 @@ const loadModel = async (room) => {
     tableObjs.push(tableObj);
     // tableObjs.push(newTable);
     tableObj.position.z = -7;
+}
 
+const loadModels = async (room) => {
+    await loadBlueCube();
+    await loadRedCube();
+    await loadArrows();
+    await loadTable();    
 };
 
-const makeHUD = (scene) => {
+const updateScore = (scoreInfo) => {
+    scoreText.set({
+        content: `${scoreInfo.score}`,
+        fontSize: 0.25
+    });
+    comboText2.set({
+        content: `${scoreInfo.combo}`,
+        fontSize: 0.25
+    });
+}
+
+const makeHUD = (scene,options,scoreInfo) => {
 	const leftHud = new ThreeMeshUI.Block({
-        width: 0.8,
-        height: 1.5,
-        padding: 0.2,
+        width: options.left.style.width,
+        height: options.left.style.height,
+        padding: options.left.style.padding,
         fontFamily: FontJSON,
         fontTexture: FontImage,
-    })
-    const leftUItext = new ThreeMeshUI.Text({
-        content: "Left Hud",
-        fontSize: 0.1
+        padding: 0.2,
     });
-    leftHud.position.set(-2.5, 0.5, -2);
-	leftHud.rotation.y = +0.55;
-    leftHud.add(leftUItext);
+    leftHud.position.set(options.left.position.x,options.left.position.y,options.left.position.z);
+    leftHud.rotation.set(options.left.rotation.x,options.left.rotation.y,options.left.rotation.z);
 
-	const rightHud = new ThreeMeshUI.Block({
-        width: 0.8,
-        height: 1.5,
-        padding: 0.1,
+    const scoreSection = new ThreeMeshUI.Block({
+        width: options.left.style.width,
+        height: 0.35,
+        fontFamily: FontJSON,
+        fontTexture: FontImage,
+        backgroundOpacity: 0,
+    });
+    scoreSection.position.set(0,5,0);
+    const comboSection = new ThreeMeshUI.Block({
+        width: 0.6,
+        height: 0.6,
+        fontFamily: FontJSON,
+        fontTexture: FontImage,
+        justifyContent: 'center',
+        alignContent: 'center',
+    });
+    comboSection.set({
+		borderRadius: 0.3,
+		borderWidth: 0.03,
+		borderColor: new THREE.Color( 1, 0.5, 1 )
+	});
+    leftHud.add(scoreSection);
+    leftHud.add(comboSection);
+    scoreText = new ThreeMeshUI.Text({
+        content: `${scoreInfo.score}`,
+        fontSize: 0.25
+    });
+    const comboText = new ThreeMeshUI.Text({
+        content: `X`,
+        fontSize: 0.10
+    });   
+    comboText2 = new ThreeMeshUI.Text({
+        content: `${scoreInfo.combo}`,
+        fontSize: 0.20
+    });
+    scoreSection.add(scoreText);
+    comboSection.add(comboText);
+    comboSection.add(comboText2);
+	
+    const rightHud = new ThreeMeshUI.Block({
+        width: options.right.style.width,
+        height: options.right.style.height,
+        padding: options.right.style.padding,
         fontFamily: FontJSON,
         fontTexture: FontImage,
         justifyContent: 'end',
@@ -132,8 +190,8 @@ const makeHUD = (scene) => {
         content: ``,
         fontSize: 0.08,
     });
-    rightHud.position.set(2.5, 0.5, -2);
-	rightHud.rotation.y = -0.55;
+    rightHud.position.set(options.right.position.x,options.right.position.y, options.right.position.z);
+    rightHud.rotation.set(options.right.rotation.x,options.right.rotation.y, options.right.rotation.z);
     rightHud.add(rightUItext);
 
     
@@ -212,7 +270,7 @@ const loadsong = ()=>{
 const startspawn = async (room) => {
     spawnObjectCallbacks(room,notes,0);
     audio = new Audio(sound);
-    await loadModel();
+    await loadModels();
     tableObjs.forEach(tableObj => {
         room.add(tableObj);
     });
@@ -220,4 +278,4 @@ const startspawn = async (room) => {
     audio.loop = true;
 }
 
-export { makeHUD, loadsong, startspawn }
+export { makeHUD, loadsong, startspawn, updateScore }

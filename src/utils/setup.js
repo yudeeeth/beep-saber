@@ -6,61 +6,55 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { handleCollisions } from "../components/collisiondetect.js";
 
-let renderer,camera,room,balls,scene,clock, composer, renderScene,score, combo;
+let state;
+let renderScene,composer;
 
-function initialise(_renderer,_camera,_room,_balls,_scene,_clock,_score,_combo){
-    renderer = _renderer;
-    camera = _camera;
-    room = _room;
-    balls = _balls;
-    scene = _scene;
-    clock = _clock;
-    score = _score;
-    combo = _combo;
+function initialise(props){
+    state = props;
 }
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    state.camera.aspect = window.innerWidth / window.innerHeight;
+    state.camera.updateProjectionMatrix();
+    state.renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
-    renderer.setAnimationLoop(()=>{render();});
+    state.renderer.setAnimationLoop(()=>{render();});
 }
 
 const glowEffect = () => {
-    renderScene = new RenderPass( scene, camera );
+    renderScene = new RenderPass( state.scene, state.camera );
     const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
     bloomPass.threshold = 0;
     bloomPass.strength = 0.5;
     bloomPass.radius = 0;
 
-    composer = new EffectComposer( renderer );
+    composer = new EffectComposer( state.renderer );
     composer.addPass( renderScene );
     composer.addPass( bloomPass );
 }
 
 // called every frame
 function render() {
-    const delta = clock.getDelta() * 60;
+    const delta = state.clock.getDelta() * 60;
     ThreeMeshUI.update();
-    handleCollisions(room,balls,score,combo);
-    updateButtons(scene,renderer,camera,balls);
-    for (let i = 0; i < room.children.length; i++) {
-        const cube = room.children[i];
+    handleCollisions(state.room,state.balls,state.scoreInfo);
+    updateButtons(state.scene,state.renderer,state.camera,state.balls);
+    for (let i = 0; i < state.room.children.length; i++) {
+        const cube = state.room.children[i];
         if (cube.userData.objectType === "obstacle") {
             cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
             cube.position.add(cube.userData.velocity);
             if (cube.position.z > 4) {
-                // set combo
-                // combo = 0;
-                room.remove(cube);
+                // set state.combo
+                // state.combo = 0;
+                state.room.remove(cube);
             }
         }
     }
 
-    renderer.render(scene, camera);
+    state.renderer.render(state.scene, state.camera);
     // composer.render();
 }
 

@@ -19,8 +19,7 @@ function App() {
 	let balls = {};
 	let roomcode = "beepbeep";
 	let loader = new OBJLoader();
-	let score = 0;
-	let combo = 1;
+	let scoreInfo = {score:0,combo:1};
 
 	// do once at the beginning
 	useEffect(() => {
@@ -112,7 +111,7 @@ function App() {
 	}
 
 	init();
-	initialise(renderer, camera, room, balls, scene, clock);
+	initialise({renderer, camera, room, balls, scene, clock, scoreInfo});
 	// glowEffect();
 	animate();
 	loadsong();
@@ -133,8 +132,50 @@ function App() {
 		camera.position.set(0, 1.5, 3);
 		scene.add(camera);
 
+		let sideOptions = {
+			left:{
+				position: {x: -2.5, y: 0.5, z: 0},
+				rotation: {x: 0,y: 0.55,z: 0},
+				style: {
+					width: 0.8,
+					height: 1.5,
+					padding: 0.1,
+				}
+			}, 
+			right:{
+				position: { x: 2.5, y: 0.5, z: 0},
+				rotation: { x: 0, y: -0.55, z: 0},
+				style: {
+					width: 0.8,
+					height: 1.5,
+					padding: 0.1,
+				}
+			}
+		};
+
+		let topOptions = {
+			left:{
+				position: {x: -1.75, y: 1.75, z: -2},
+				rotation: {x: 0.45, y: 0, z: -0.2},
+				style: {
+					width: 1.5,
+					height: 1.25,
+					padding: 0.1,
+				}
+			}, 
+			right:{
+				position: { x: 1.75, y: 1.75, z: -2},
+				rotation: { x: 0.45, y: 0, z: 0.2},
+				style: {
+					width: 1.5,
+					height: 0.8,
+					padding: 0.1,
+				}
+			}
+		};
+
 		// makeMenu(scene, renderer);
-		makeHUD(scene, renderer);
+		makeHUD(scene,topOptions ,scoreInfo);
 		createRoom();
 		makePlayerPlatform(scene, renderer);
 

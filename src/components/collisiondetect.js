@@ -1,4 +1,5 @@
 import hitSound from "../assets/songs/hitsounds/HitSound.ogg";
+import { updateScore } from "./Notes";
 let initialise = false;
 let sound;
 const getMat = (direction) => {
@@ -25,27 +26,24 @@ const getHitDirection = (cube, balls, prop) => {
     else return false;
 }
 
-const changeScore = (Hitdirection, colorMatch, score, combo) => {
+const changeScore = (Hitdirection, colorMatch, scoreInfo) =>{
     let basescore = 10;
-    if (!colorMatch) {
-        combo = 1;
-        sound.play();
-        // console.table({score,combo});
-        return;
+    if(!colorMatch){
+        scoreInfo.combo = 1;
     }
-    if (!Hitdirection) {
-        basescore /= 2;
-    }
-    score += basescore * combo;
-    if (Hitdirection) {
-        combo++;
+    else{
+        if(!Hitdirection){
+            basescore/=2;
+        }
+        scoreInfo.score += basescore * scoreInfo.combo;
+        if(Hitdirection)
+        scoreInfo.combo++;
     }
     sound.play();
-    // console.table({score,combo});
-
+    updateScore(scoreInfo);
 }
 
-const handleCollisions = (room, balls, score, combo) => {
+const handleCollisions = (room,balls,scoreInfo) => {
     if (initialise == false) {
         initialise = true;
         sound = new Audio(hitSound);
@@ -62,7 +60,7 @@ const handleCollisions = (room, balls, score, combo) => {
                     console.log('collision');
                     let Hitdirection = getHitDirection(cube, balls, prop);
                     let colorMatch = cube.userData.color == balls[prop].userData.color;
-                    changeScore(Hitdirection, colorMatch, score, combo);
+                    changeScore(Hitdirection,colorMatch,scoreInfo);
                     room.remove(cube);
                 }
             }
