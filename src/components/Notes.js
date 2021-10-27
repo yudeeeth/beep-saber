@@ -211,9 +211,7 @@ const startspawn = async (room) => {
         room.add(tableObj);
     });
     audio.play();
-    audio.volume = 0;
     audio.loop = true;
 }
-
 
 export { makeHUD, loadsong, startspawn }

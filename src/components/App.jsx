@@ -109,7 +109,7 @@ function App() {
 
 	init();
 	initialise(renderer, camera, room, balls, scene, clock);
-	glowEffect();
+	// glowEffect();
 	animate();
 	loadsong();
 	startspawn(room);

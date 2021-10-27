@@ -75,7 +75,7 @@ function render() {
     }
 
     renderer.render(scene, camera);
-    composer.render();
+    // composer.render();
 }
 
 export { onWindowResize, animate, glowEffect, handleCollisions, render , initialise};
