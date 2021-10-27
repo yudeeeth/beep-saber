@@ -95,7 +95,11 @@ const loadModel = async (room) => {
             mat.map = texture;
         }
     });
+    // let newTable  = tableObj.clone();
+    // newTable.scale.set(9,9,9);
+    // newTable.position.y = -30;
     tableObjs.push(tableObj);
+    // tableObjs.push(newTable);
     tableObj.position.z = -7;
 
 };
