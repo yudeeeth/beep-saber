@@ -57,7 +57,6 @@ const handleCollisions = (room,balls,scoreInfo) => {
                     dist = Math.pow(cube.userData.radius, 2) + Math.pow(balls[prop].userData.radius, 2);
                 }
                 if (cube.position.distanceToSquared(balls[prop].position) < dist) {
-                    console.log('collision');
                     let Hitdirection = getHitDirection(cube, balls, prop);
                     let colorMatch = cube.userData.color == balls[prop].userData.color;
                     changeScore(Hitdirection,colorMatch,scoreInfo);

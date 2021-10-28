@@ -110,12 +110,12 @@ function App(props) {
 	}
 
 	const fetchFile = async (mapId,fileName,callBack) =>{
-		let res = await fetch(`http://localhost:5000/map/${mapId}/file/${fileName}`)
+		let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}/file/${fileName}`)
 		callBack(res);
 	};
 
 	const readSongFiles = async (mapId) => {
-		let res = await fetch(`http://localhost:5000/map/${mapId}`)
+		let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}`)
 		let data = await res.text();
 		let fileName;
 		await fetchFile(mapId,'Info.dat',async (res)=>{
@@ -127,7 +127,6 @@ function App(props) {
 			await fetchFile(mapId,fileName,async (res)=>{
 				let data = await res.text();
 				song = {...song, ...JSON.parse(data)};
-				console.log(song);
 				callAllFunctions();
 			})
 		})

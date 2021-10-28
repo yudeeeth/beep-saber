@@ -202,7 +202,6 @@ const makeHUD = (scene,options,scoreInfo,mapId,song) => {
     rightHud.rotation.set(options.right.rotation.x,options.right.rotation.y, options.right.rotation.z);
 
     let songName = song['_songName'];
-    console.log(songName);
     songName = songName.substring(0,15);
     
     const songNameSection = new ThreeMeshUI.Block({
@@ -225,7 +224,7 @@ const makeHUD = (scene,options,scoreInfo,mapId,song) => {
         borderRadius:0,
     });
 
-    new THREE.TextureLoader().load(`http://localhost:5000/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
+    new THREE.TextureLoader().load(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
         songCover.set({
             backgroundTexture: texture,
             backgroundOpacity: 0.7,
@@ -412,7 +411,7 @@ const startspawn = async (room,mapId,song) => {
         room.add(tableObj);
     });
     const convertToTime = 60/bpm;
-    audio = new Audio(`http://localhost:5000/map/${mapId}/file/${song['_songFilename']}`);
+    audio = new Audio(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_songFilename']}`);
     setTimeout(()=>{
         audio.play();
     },25/12 * convertToTime * 1000);
