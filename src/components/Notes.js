@@ -4,6 +4,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import cubeModel from "../assets/cube.obj";
 import arrowModel from "../assets/arrow.obj";
+import sphereModel from "../assets/sphere.obj";
 import tableModel from "../assets/new.glb";
 import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
@@ -12,7 +13,7 @@ import FontImage from '../assets/Roboto-msdf.png';
 let notes,bpm;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
-let redCubeObj,blueCubeObj, blueArrowObj;
+let redCubeObj, blueCubeObj, redDotCubeObj, blueDotCubeObj, blueArrowObj, sphereObj;
 let tableObjs = [];
 let scoreText, comboText2, songBar, rightUItext, songCover;
 let room;
@@ -53,6 +54,30 @@ const loadRedCube = async () => {
     });
 }
 
+const loadBlueDotCube = async () => {
+    let blueDotMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
+    blueDotCubeObj = await loader.loadAsync(cubeModel);
+    blueDotCubeObj.material = blueDotMaterial;
+    blueDotCubeObj.rotation.x = -Math.PI / 2;
+    blueDotCubeObj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+            child.material = blueDotMaterial;
+        }
+    });
+}
+
+const loadRedDotCube = async () => {
+    let redDotMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+    redDotCubeObj = await loader.loadAsync(cubeModel);
+    redDotCubeObj.material = redDotMaterial;
+    redDotCubeObj.rotation.x = -Math.PI / 2;
+    redDotCubeObj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+            child.material = redDotMaterial;
+        }
+    });
+}
+
 const loadArrows = async () => {
     let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
     blueArrowObj = await loader.loadAsync(arrowModel);
@@ -74,6 +99,25 @@ const loadArrows = async () => {
     
     blueCubeObj.add(blueArrowObj);
     redCubeObj.add(redArrowObj);
+}
+
+const loadSphere = async () => {
+    let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+    sphereObj = await loader.loadAsync(sphereModel);
+    sphereObj.material = whiteMaterial;
+    sphereObj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+            child.material = whiteMaterial;
+        }
+    });
+    sphereObj.scale.set(0.355,0.355,0.355);
+    sphereObj.position.y = -0.75;
+    sphereObj.userData.objectType = 'sphere';    
+    
+    let clonedSphereObj = sphereObj.clone();
+    
+    blueDotCubeObj.add(sphereObj);
+    redDotCubeObj.add(clonedSphereObj);
 }
 
 const loadTable = async (room) => {
@@ -105,7 +149,10 @@ const loadTable = async (room) => {
 const loadModels = async (room) => {
     await loadBlueCube();
     await loadRedCube();
+    await loadBlueDotCube();
+    await loadRedDotCube();
     await loadArrows();
+    await loadSphere();
     await loadTable();    
 };
 
@@ -381,9 +428,14 @@ const setPosition = (object, notes) => {
 
 
 function makeCube(room, notes,i,bpm){
-    if(redCubeObj === undefined || blueCubeObj === undefined)
+    if(redCubeObj === undefined || blueCubeObj === undefined || redDotCubeObj === undefined || blueDotCubeObj === undefined)
         return;
-    let object = notes[i]["_type"]%2? redCubeObj.clone(): blueCubeObj.clone();
+    
+    let object;
+    if(notes[i]["_cutDirection"] === 8)
+        object = notes[i]["_type"] % 2 ? redDotCubeObj.clone(): blueDotCubeObj.clone();
+    else
+        object = notes[i]["_type"] % 2 ? redCubeObj.clone(): blueCubeObj.clone();
     let side = 0.25;
     object.scale.set(side,side,side);
 
@@ -392,7 +444,7 @@ function makeCube(room, notes,i,bpm){
     // object.userData.velocity = new THREE.Vector3();
     object.userData.objectType = 'obstacle';
     object.userData.radius =  Math.sqrt(3) * side;
-    object.userData.color = notes[i]["_type"]%2? "red":"blue";
+    object.userData.color = notes[i]["_type"] % 2 ? "red": "blue";
     object.rotation.y += getAngle(notes[i]["_cutDirection"]);
     object.userData.direction = notes[i]["_cutDirection"];
     object.userData.velocity = 12;
@@ -404,9 +456,9 @@ function makeCube(room, notes,i,bpm){
 }
 
 const preload = async (_room,mapId,song) => {
-    room = _room
+    room = _room;
     notes = song['_notes'];
-    bpm = song['_beatsPerMinute']
+    bpm = song['_beatsPerMinute'];
     await loadModels();
     tableObjs.forEach(tableObj => {
         room.add(tableObj);

@@ -18,6 +18,7 @@ const getMat = (direction) => {
 }
 
 const getHitDirection = (cube, balls, prop) => {
+    if(cube.userData.direction === 8) return true;
     let vec_x = Math.sign(balls[prop].position.x - cube.position.x);
     let vec_y = Math.sign(balls[prop].position.y - cube.position.y);
     let hitMatrix = getMat(cube.userData.direction);
