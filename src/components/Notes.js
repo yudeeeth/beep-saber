@@ -9,39 +9,22 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
 
-// homura song
-import sound from "../assets/songs/homura/song.egg";
-import homuraSong from "../assets/songs/homura/HardStandard.dat";
-import homuraInfo from "../assets/songs/homura/Info.dat";
-import homuraImage from "../assets/songs/homura/cover.jpg";
-
-let notes, audio, song;
+let audio;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
 let redCubeObj,blueCubeObj, blueArrowObj;
 let tableObjs = [];
-let scoreText, comboText2, songBar, rightUItext;
+let scoreText, comboText2, songBar, rightUItext, songCover;
 
-const readSongFiles = async (songInfo,songData) => {
-    let infoFile = await fetch(songInfo);
-    const infoText = await infoFile.text();
-    const infoJSON = JSON.parse(infoText);
-
-    let songFile = await fetch(songData);
-    const songText = await songFile.text();
-    const songJSON = JSON.parse(songText);
-    song = {...infoJSON, ...songJSON};
-}
-
-const spawnObjectCallbacks = (room,notes,i,bpm=150,time = 4) => {
-    const convertToTime = 60/song['_beatsPerMinute'];
+const spawnObjectCallbacks = (room,notes,i,bpm) => {
+    const convertToTime = 60/bpm;
     if(i==0)
-        setTimeout( ()=>{makeCube(room,notes,i) }, (
+        setTimeout( ()=>{makeCube(room,notes,i,bpm) }, (
             Math.floor(
                 ((notes[i]["_time"] * convertToTime)
             ))*1000));
     else{
-        setTimeout( ()=>{makeCube(room,notes,i) }, Math.floor(( (notes[i]["_time"] - notes[i-1]["_time"]) * convertToTime )*1000));
+        setTimeout( ()=>{makeCube(room,notes,i,bpm) }, Math.floor(( (notes[i]["_time"] - notes[i-1]["_time"]) * convertToTime )*1000));
     }
 }
 
@@ -159,7 +142,7 @@ const updateSong = () => {
     });
 }
 
-const makeHUD = (scene,options,scoreInfo) => {
+const makeHUD = (scene,options,scoreInfo,mapId,song) => {
 	const leftHud = new ThreeMeshUI.Block({
         width: options.left.style.width,
         height: options.left.style.height,
@@ -219,6 +202,7 @@ const makeHUD = (scene,options,scoreInfo) => {
     rightHud.rotation.set(options.right.rotation.x,options.right.rotation.y, options.right.rotation.z);
 
     let songName = song['_songName'];
+    console.log(songName);
     songName = songName.substring(0,15);
     
     const songNameSection = new ThreeMeshUI.Block({
@@ -241,7 +225,7 @@ const makeHUD = (scene,options,scoreInfo) => {
         borderRadius:0,
     });
 
-    new THREE.TextureLoader().load(homuraImage, (texture) => {
+    new THREE.TextureLoader().load(`http://localhost:5000/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
         songCover.set({
             backgroundTexture: texture,
             backgroundOpacity: 0.7,
@@ -396,7 +380,7 @@ const setPosition = (object, notes) => {
 }
 
 
-function makeCube(room, notes,i){
+function makeCube(room, notes,i,bpm){
     if(redCubeObj === undefined || blueCubeObj === undefined)
         return;
     let object = notes[i]["_type"]%2? redCubeObj.clone(): blueCubeObj.clone();
@@ -415,27 +399,24 @@ function makeCube(room, notes,i){
     object.userData.index = i;
     i++;
     if(i<notes.length)
-    spawnObjectCallbacks(room, notes,i);
+    spawnObjectCallbacks(room, notes,i,bpm);
     room.add(object);
 }
 
-const loadsong = async ()=>{
-    await readSongFiles(homuraInfo,homuraSong);
-    notes = song["_notes"];
-}
-
-const startspawn = async (room) => {
-    const convertToTime = 60/song['_beatsPerMinute'];
-    spawnObjectCallbacks(room,notes,0);
-    audio = new Audio(sound);
+const startspawn = async (room,mapId,song) => {
+    let notes = song['_notes'];
+    let bpm = song['_beatsPerMinute']
+    spawnObjectCallbacks(room,notes,0,bpm);
     await loadModels();
     tableObjs.forEach(tableObj => {
         room.add(tableObj);
     });
+    const convertToTime = 60/bpm;
+    audio = new Audio(`http://localhost:5000/map/${mapId}/file/${song['_songFilename']}`);
     setTimeout(()=>{
         audio.play();
     },25/12 * convertToTime * 1000);
     audio.loop = true;
 }
 
-export { makeHUD, loadsong, startspawn, updateScore , makeLasers }
+export { makeHUD, startspawn, updateScore , makeLasers }

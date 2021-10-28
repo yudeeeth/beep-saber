@@ -47,7 +47,6 @@ function render() {
             if(delta == 0) continue;
             let distance_moved = cube.userData.velocity * delta;
             cube.position.z += distance_moved;
-            console.log(distance_moved,delta);
             if (cube.position.z > 4) {
                 // set state.combo
                 // state.combo = 1;

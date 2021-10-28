@@ -7,19 +7,17 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render, glowEffect } from "../utils/setup.js"
 import { makeMenu, makePlayerPlatform } from "../utils/menu.js";
-import { makeHUD, loadsong, startspawn, makeLasers } from "./Notes";
+import { makeHUD, startspawn, makeLasers } from "./Notes";
 
-function App() {
+function App(props) {
 	// globals
-	let clock = new THREE.Clock();
-	let container;
-	let camera, scene, renderer;
-	let room;
-	let spawnObjectInterval;
-	let balls = {};
+	let clock = new THREE.Clock(), loader = new OBJLoader();
+	let container, camera, scene, renderer, room, balls = {};
 	let roomcode = "beepbeep";
-	let loader = new OBJLoader();
 	let scoreInfo = {score:0,combo:1};
+	let mapId = props.mapId;
+	let difficulty = props.difficulty;
+	let song;
 
 	// do once at the beginning
 	useEffect(() => {
@@ -79,7 +77,6 @@ function App() {
 		scene.add(light);
 	}
 
-
 	const createBalls = () => {
 		let arr = ['left', 'right'];
 		for (let i = 0; i < 2; i++) {
@@ -112,17 +109,41 @@ function App() {
 		}
 	}
 
-	const callAllFunctions = async () => {
-		await loadsong();
+	const fetchFile = async (mapId,fileName,callBack) =>{
+		let res = await fetch(`http://localhost:5000/map/${mapId}/file/${fileName}`)
+		callBack(res);
+	};
+
+	const readSongFiles = async (mapId) => {
+		let res = await fetch(`http://localhost:5000/map/${mapId}`)
+		let data = await res.text();
+		let fileName;
+		await fetchFile(mapId,'Info.dat',async (res)=>{
+			let data = await res.text();
+			song = JSON.parse(data);  
+			let standardMaps = song['_difficultyBeatmapSets'][0]['_difficultyBeatmaps'];
+			let myMap = standardMaps.filter(beatmap => beatmap['_difficulty'] === difficulty)[0];
+			fileName = myMap['_beatmapFilename'];
+			await fetchFile(mapId,fileName,async (res)=>{
+				let data = await res.text();
+				song = {...song, ...JSON.parse(data)};
+				console.log(song);
+				callAllFunctions();
+			})
+		})
+	}
+
+	readSongFiles(mapId);
+
+	const callAllFunctions = () => {
 		init();
 		clock.start();
 		initialise({renderer, camera, room, balls, scene, clock, scoreInfo});
 		// glowEffect();
 		animate();
-		startspawn(room);	
+		startspawn(room,mapId,song);	
 	}
 
-	callAllFunctions();
 		
 	function init() {
 		// Make a container and append it to the body
@@ -161,7 +182,7 @@ function App() {
 		};
 
 		// makeMenu(scene, renderer);
-		makeHUD(scene,topOptions ,scoreInfo);
+		makeHUD(scene,topOptions ,scoreInfo, mapId, song);
 		makeLasers(scene,topOptions);
 		createRoom();
 		makePlayerPlatform(scene, renderer);
