@@ -9,7 +9,6 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
 
-let audio;
 let notes,bpm;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
@@ -122,7 +121,7 @@ const updateScore = (scoreInfo) => {
     
 }
 
-const updateSong = () => {
+const updateSong = (audio) => {
     let currMins = Math.floor(audio.currentTime / 60);
     let currSecs = Math.floor(audio.currentTime % 60);
     let totalMins = Math.floor(audio.duration / 60);
@@ -144,7 +143,7 @@ const updateSong = () => {
     });
 }
 
-const makeHUD = (scene,options,scoreInfo,mapId,song) => {
+const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
 	const leftHud = new ThreeMeshUI.Block({
         width: options.left.style.width,
         height: options.left.style.height,
@@ -279,7 +278,7 @@ const makeHUD = (scene,options,scoreInfo,mapId,song) => {
 
     setInterval(()=>{
         if(audio!==undefined){
-            updateSong();
+            updateSong(audio);
         }
     },1000);
 
@@ -412,16 +411,14 @@ const preload = async (_room,mapId,song) => {
     tableObjs.forEach(tableObj => {
         room.add(tableObj);
     });
-    audio = new Audio(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_songFilename']}`);
 }
 
-const startspawn = async () => {
+const startspawn = async (audio) => {
     spawnObjectCallbacks(room,notes,0,bpm);
     const convertToTime = 60/bpm;
     setTimeout(()=>{
         audio.play();
     },25/12 * convertToTime * 1000);
-    // audio.loop = true;
 }
 
 export { makeHUD, preload ,startspawn, updateScore , makeLasers }

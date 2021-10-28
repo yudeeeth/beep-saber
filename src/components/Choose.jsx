@@ -7,15 +7,25 @@ class Choose extends React.Component {
     state = {
         start: false,
         roomcode: null,
-        mapURL: "",
+        mapURL: "https://as.cdn.beatsaver.com/f65fb6890005d1f6b184c5aaf91c4f98737797ec.zip",
         mapId : "f65fb6890005d1f6b184c5aaf91c4f98737797ec",
         difficulty: "Hard",
+        song: {},
+        difficultyOptions: [],
+        standardMaps: [],
+        songLoaded: false,
+        audio: null,
     };
 
     menuOrApp = () => {
         if(!this.state.start)
             return this.menu();
-        return <App key="vrstuff" mapId = {this.state.mapId} difficulty={this.state.difficulty}/>;
+        return <App key="vrstuff" 
+            song={this.state.song} 
+            mapId={this.state.mapId} 
+            isStarted={this.state.start}
+            audio={this.state.audio}
+        />;
     };
 
     handleURLChange = (event) => {
@@ -29,6 +39,41 @@ class Choose extends React.Component {
         mapId = mapId.split(".")[0];
         console.log(mapId);
         this.setState({mapId: mapId});
+        this.readSongFiles(mapId);
+    }
+
+    fetchFile = async (mapId,fileName,callBack) =>{
+		let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}/file/${fileName}`)
+		callBack(res);
+	};
+
+	readSongFiles = async (mapId) => {
+		let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}`)
+		let data = await res.text();
+		await this.fetchFile(mapId,'Info.dat',async (res)=>{
+			let data = await res.text();
+			let song = JSON.parse(data);  
+            this.setState({song: song});
+			let standardMaps = song['_difficultyBeatmapSets'][0]['_difficultyBeatmaps'];
+            standardMaps.forEach(map => {
+                this.state.difficultyOptions.push(map['_difficulty'])
+            });
+            this.setState({standardMaps: standardMaps});
+            let audio = new Audio(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_songFilename']}`);
+            this.setState({audio: audio});
+		})
+	}
+
+    loadCurrentDifficulty = async (event) => {
+        this.setState({difficulty: event.target.value})
+        let myMap = this.state.standardMaps.filter(beatmap => beatmap['_difficulty'] === this.state.difficulty)[0];
+        let fileName = myMap['_beatmapFilename'];
+        await this.fetchFile(this.state.mapId,fileName,async (res)=>{
+            let data = await res.text();
+            let song = this.state.song;
+            song = {...song, ...JSON.parse(data)};
+            this.setState({song: song,songLoaded: true});
+        })
     }
 
     menu = () => {
@@ -54,17 +99,21 @@ class Choose extends React.Component {
                 <button onClick={this.setMapId}>Load Map</button>
                 <p>{this.state.mapId!=""?`Map ${this.state.mapId} Loaded.`:"Please Enter a Map Url"}</p>
                 <h3>Difficulty</h3>
-                <select value={this.state.difficulty} onChange={(event) => this.setState({difficulty: event.target.value})}>
-                    <option value="Easy">Easy</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Hard">Hard</option>
-                    <option value="Expert">Expert</option>
-                    <option value="ExpertPlus">Expert+</option>
-                    <option value="ExpertPlusPlus">Expert++</option>
+                <select value={this.state.difficulty} onChange={(event) =>this.setState({difficulty: event.target.value})}>
+                    {
+                        this.state.difficultyOptions.map((difficulty) => {
+                            return <option value={difficulty}>{difficulty}</option>
+                        })
+                    }
                 </select>
+                <button onClick={this.loadCurrentDifficulty}>Load Difficulty</button>
                 <br />
                 <br />
-                <button onClick={this.changeComponent}>Open Game</button>
+                {
+                    this.state.songLoaded?
+                        <button onClick={this.changeComponent}>Open Game</button>
+                    :null
+                }
             </div>
         );
     };

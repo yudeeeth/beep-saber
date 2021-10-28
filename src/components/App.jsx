@@ -15,9 +15,7 @@ function App(props) {
 	let container, camera, scene, renderer, room, balls = {};
 	let roomcode = "beepbeep";
 	let scoreInfo = {score:0,combo:1};
-	let mapId = props.mapId;
-	let difficulty = props.difficulty;
-	let song;
+	let {mapId, song, isStarted, audio} = props;
 
 	// do once at the beginning
 	useEffect(() => {
@@ -38,6 +36,13 @@ function App(props) {
 		});
 
 	}, []);
+
+	useEffect(() => {
+		if(isStarted!==undefined && isStarted){
+			console.log(song);
+			callAllFunctions();
+		}
+	}, [isStarted]);
 
 	const moveBallsUsing = (coords) => {
 		let x, y;
@@ -109,31 +114,6 @@ function App(props) {
 		}
 	}
 
-	const fetchFile = async (mapId,fileName,callBack) =>{
-		let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}/file/${fileName}`)
-		callBack(res);
-	};
-
-	const readSongFiles = async (mapId) => {
-		let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}`)
-		let data = await res.text();
-		let fileName;
-		await fetchFile(mapId,'Info.dat',async (res)=>{
-			let data = await res.text();
-			song = JSON.parse(data);  
-			let standardMaps = song['_difficultyBeatmapSets'][0]['_difficultyBeatmaps'];
-			let myMap = standardMaps.filter(beatmap => beatmap['_difficulty'] === difficulty)[0];
-			fileName = myMap['_beatmapFilename'];
-			await fetchFile(mapId,fileName,async (res)=>{
-				let data = await res.text();
-				song = {...song, ...JSON.parse(data)};
-				callAllFunctions();
-			})
-		})
-	}
-
-	readSongFiles(mapId);
-
 	const callAllFunctions = () => {
 		init();
 		clock.start();
@@ -143,7 +123,6 @@ function App(props) {
 		preload(room,mapId,song);	
 	}
 
-		
 	function init() {
 		// Make a container and append it to the body
 		container = document.createElement("div");
@@ -180,8 +159,8 @@ function App(props) {
 			}
 		};
 
-		makeMenu(scene, renderer);
-		makeHUD(scene,topOptions ,scoreInfo, mapId, song);
+		makeMenu(scene, audio);
+		makeHUD(scene,topOptions ,scoreInfo, mapId, song, audio);
 		makeLasers(scene,topOptions);
 		createRoom();
 		makePlayerPlatform(scene, renderer);

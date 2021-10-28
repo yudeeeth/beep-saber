@@ -26,7 +26,7 @@ const setdefault = (e) => {
 	defaultstart = e.target.checked;
 }
 
-const makeMenu = (scene,renderer, options) => {
+const makeMenu = (scene,audio) => {
     vrUI = new ThreeMeshUI.Block({
         width: 1.2,
         height: 0.7,
@@ -36,7 +36,7 @@ const makeMenu = (scene,renderer, options) => {
     })
     vrUI.position.set(0, 1.5, 1);
     vrUI.rotation.x = -0.55;
-    makebutton(scene,vrUI);
+    makebutton(scene,vrUI,audio);
     scene.add(vrUI);
 };
 
@@ -62,7 +62,7 @@ function makePlayerPlatform(scene) {
 	});
 };
 
-const makebutton = (scene,vrUI)=>{
+const makebutton = (scene,vrUI,audio)=>{
     const buttonOptions = {
 		width: 0.4,
 		height: 0.15,
@@ -121,7 +121,7 @@ const makebutton = (scene,vrUI)=>{
 			}
 			else{
 				(function(){
-					startspawn();
+					startspawn(audio);
 					scene.remove(vrUI);
 				})()
 			}
