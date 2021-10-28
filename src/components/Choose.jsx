@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import App from "./App.jsx";
+import { setdefault } from "../utils/menu.js";
 
 class Choose extends React.Component {
     
@@ -46,6 +47,8 @@ class Choose extends React.Component {
                     5. Press start in this website.
                 </p>
                 <div>Hello the roomcode is : {this.getRoomcode()}.</div>
+                <p>Start game as soon as you Enter</p>
+                <input type="checkbox" defaultChecked="true" onClick={setdefault} />
                 <h3>Enter Map Link</h3>
                 <input type="text" value={this.state.mapURL} onChange={this.handleURLChange}/>
                 <button onClick={this.setMapId}>Load Map</button>

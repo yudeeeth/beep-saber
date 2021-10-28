@@ -2,8 +2,11 @@ import * as THREE from "three";
 import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
+import { startspawn } from "../components/Notes";
 
 let objsToTest =[];
+let vrUI;
+let defaultstart = true;
 
 const raycaster = new THREE.Raycaster();
 
@@ -18,21 +21,21 @@ window.addEventListener( 'pointermove', ( event )=>{
 
 });
 
+const setdefault = (e) => {
+	console.log(e.target.checked);
+	defaultstart = e.target.checked;
+}
+
 const makeMenu = (scene,renderer, options) => {
-    const vrUI = new ThreeMeshUI.Block({
+    vrUI = new ThreeMeshUI.Block({
         width: 1.2,
         height: 0.7,
         padding: 0.2,
         fontFamily: FontJSON,
         fontTexture: FontImage,
     })
-    const UItext = new ThreeMeshUI.Text({
-        content: "Start Game",
-        fontSize: 0.1
-    });
     vrUI.position.set(0, 1.5, 1);
     vrUI.rotation.x = -0.55;
-    vrUI.add(UItext);
     makebutton(scene,vrUI);
     scene.add(vrUI);
 };
@@ -96,16 +99,12 @@ const makebutton = (scene,vrUI)=>{
 	// Buttons creation, with the options objects passed in parameters.
 
 	const buttonNext = new ThreeMeshUI.Block( buttonOptions );
-	const buttonPrevious = new ThreeMeshUI.Block( buttonOptions );
+
 
 	// Add text to buttons
 
 	buttonNext.add(
-		new ThreeMeshUI.Text({ content: "next" })
-	);
-
-	buttonPrevious.add(
-		new ThreeMeshUI.Text({ content: "previous" })
+		new ThreeMeshUI.Text({ content: "Start" })
 	);
     const selectedAttributes = {
 		offset: 0.02,
@@ -117,7 +116,15 @@ const makebutton = (scene,vrUI)=>{
 		state: "selected",
 		attributes: selectedAttributes,
 		onSet: ()=> {
-                ;
+            if(!defaultstart){
+				defaultstart=true;
+			}
+			else{
+				(function(){
+					startspawn();
+					scene.remove(vrUI);
+				})()
+			}
 		}
 	});
 	buttonNext.setupState( hoveredStateAttributes );
@@ -125,20 +132,12 @@ const makebutton = (scene,vrUI)=>{
 
 	//
 
-	buttonPrevious.setupState({
-		state: "selected",
-		attributes: selectedAttributes,
-		onSet: ()=> {
-            ;
-		}
-	});
-	buttonPrevious.setupState( hoveredStateAttributes );
-	buttonPrevious.setupState( idleStateAttributes );
+
 
 	//
 
-	vrUI.add( buttonNext, buttonPrevious );
-    objsToTest.push( buttonNext, buttonPrevious );
+	vrUI.add( buttonNext );
+    objsToTest.push( buttonNext);
 	// Create states for the buttons.
 	// In the loop, we will call component.setState( 'state-name' ) when mouse hover or click
 
@@ -148,12 +147,11 @@ function updateButtons(scene,renderer, camera, balls) {
 
 	// Find closest intersecting object
     let pointer = new THREE.Vector2();
-    pointer.x = balls.right.position.x;
+    pointer.x = balls.right.position.x * 6/10;
     pointer.y = balls.right.position.y - 1.5;
 	let intersect;
-
+	// pointer = mouse;
     if ( pointer.x !== null && pointer.y !== null ) {
-        
         raycaster.setFromCamera( pointer, camera );
 		intersect = raycast();
 	};
@@ -170,7 +168,7 @@ function updateButtons(scene,renderer, camera, balls) {
 		} else {
 
 			// Component.setState internally call component.set with the options you defined in component.setupState
-			intersect.object.setState( 'hovered' );
+			intersect.object.setState( 'selected' );
 
 		};
 
@@ -215,4 +213,4 @@ function raycast() {
 
 };
 
-export { makeMenu, updateButtons,makePlayerPlatform };
+export { makeMenu,setdefault, updateButtons,makePlayerPlatform };

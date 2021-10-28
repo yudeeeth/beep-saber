@@ -7,7 +7,7 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render, glowEffect } from "../utils/setup.js"
 import { makeMenu, makePlayerPlatform } from "../utils/menu.js";
-import { makeHUD, startspawn, makeLasers } from "./Notes";
+import { makeHUD, preload, makeLasers } from "./Notes";
 
 function App(props) {
 	// globals
@@ -140,7 +140,7 @@ function App(props) {
 		initialise({renderer, camera, room, balls, scene, clock, scoreInfo});
 		// glowEffect();
 		animate();
-		startspawn(room,mapId,song);	
+		preload(room,mapId,song);	
 	}
 
 		
@@ -180,7 +180,7 @@ function App(props) {
 			}
 		};
 
-		// makeMenu(scene, renderer);
+		makeMenu(scene, renderer);
 		makeHUD(scene,topOptions ,scoreInfo, mapId, song);
 		makeLasers(scene,topOptions);
 		createRoom();
@@ -197,7 +197,7 @@ function App(props) {
 		renderer.outputEncoding = THREE.sRGBEncoding;
 		renderer.xr.enabled = true;
 		container.appendChild(renderer.domElement);
-		let controls = new OrbitControls(camera,renderer.domElement);
+		// let controls = new OrbitControls(camera,renderer.domElement);
 		// controls.update();
 		window.addEventListener("resize", () => { onWindowResize(); });
 

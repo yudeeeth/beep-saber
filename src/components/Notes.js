@@ -10,11 +10,13 @@ import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
 
 let audio;
+let notes,bpm;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
 let redCubeObj,blueCubeObj, blueArrowObj;
 let tableObjs = [];
 let scoreText, comboText2, songBar, rightUItext, songCover;
+let room;
 
 const spawnObjectCallbacks = (room,notes,i,bpm) => {
     const convertToTime = 60/bpm;
@@ -402,20 +404,24 @@ function makeCube(room, notes,i,bpm){
     room.add(object);
 }
 
-const startspawn = async (room,mapId,song) => {
-    let notes = song['_notes'];
-    let bpm = song['_beatsPerMinute']
-    spawnObjectCallbacks(room,notes,0,bpm);
+const preload = async (_room,mapId,song) => {
+    room = _room
+    notes = song['_notes'];
+    bpm = song['_beatsPerMinute']
     await loadModels();
     tableObjs.forEach(tableObj => {
         room.add(tableObj);
     });
-    const convertToTime = 60/bpm;
     audio = new Audio(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_songFilename']}`);
+}
+
+const startspawn = async () => {
+    spawnObjectCallbacks(room,notes,0,bpm);
+    const convertToTime = 60/bpm;
     setTimeout(()=>{
         audio.play();
     },25/12 * convertToTime * 1000);
-    audio.loop = true;
+    // audio.loop = true;
 }
 
-export { makeHUD, startspawn, updateScore , makeLasers }
+export { makeHUD, preload ,startspawn, updateScore , makeLasers }
