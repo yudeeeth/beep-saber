@@ -11,7 +11,7 @@ import { makeHUD, loadsong, startspawn, makeLasers } from "./Notes";
 
 function App() {
 	// globals
-	const clock = new THREE.Clock();
+	let clock = new THREE.Clock();
 	let container;
 	let camera, scene, renderer;
 	let room;
@@ -115,6 +115,7 @@ function App() {
 	const callAllFunctions = async () => {
 		await loadsong();
 		init();
+		clock.start();
 		initialise({renderer, camera, room, balls, scene, clock, scoreInfo});
 		// glowEffect();
 		animate();

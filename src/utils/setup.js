@@ -8,7 +8,7 @@ import { handleCollisions } from "../components/collisiondetect.js";
 
 let state;
 let renderScene,composer;
-
+let delta=0;
 function initialise(props){
     state = props;
 }
@@ -37,14 +37,17 @@ const glowEffect = () => {
 
 // called every frame
 function render() {
-    const delta = state.clock.getDelta() * 60;
+    delta = state.clock.getDelta();
     ThreeMeshUI.update();
     handleCollisions(state.room,state.balls,state.scoreInfo);
     updateButtons(state.scene,state.renderer,state.camera,state.balls);
     for (let i = 0; i < state.room.children.length; i++) {
         const cube = state.room.children[i];
         if (cube.userData.objectType === "obstacle") {
-            cube.position.add(cube.userData.velocity);
+            if(delta == 0) continue;
+            let distance_moved = cube.userData.velocity * delta;
+            cube.position.z += distance_moved;
+            console.log(distance_moved,delta);
             if (cube.position.z > 4) {
                 // set state.combo
                 // state.combo = 1;
@@ -52,7 +55,6 @@ function render() {
             }
         }
     }
-
     state.renderer.render(state.scene, state.camera);
     // composer.render();
 }

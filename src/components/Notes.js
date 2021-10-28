@@ -405,13 +405,13 @@ function makeCube(room, notes,i){
 
     setPosition(object,notes[i]);
     object.position.z = -25;
-    object.userData.velocity = new THREE.Vector3();
+    // object.userData.velocity = new THREE.Vector3();
     object.userData.objectType = 'obstacle';
     object.userData.radius =  Math.sqrt(3) * side;
     object.userData.color = notes[i]["_type"]%2? "red":"blue";
     object.rotation.y += getAngle(notes[i]["_cutDirection"]);
     object.userData.direction = notes[i]["_cutDirection"];
-    object.userData.velocity.z = 0.2;
+    object.userData.velocity = 12;
     object.userData.index = i;
     i++;
     if(i<notes.length)
@@ -434,7 +434,7 @@ const startspawn = async (room) => {
     });
     setTimeout(()=>{
         audio.play();
-    },0.6 * 1000);
+    },25/12 * convertToTime * 1000);
     audio.loop = true;
 }
 
