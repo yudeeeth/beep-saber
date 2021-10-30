@@ -1,5 +1,7 @@
 import hitSound from "../assets/songs/hitsounds/HitSound.ogg";
 import { updateScore } from "./Notes";
+import { brokencubes } from "../components/Notes.js";
+
 let initialise = false;
 let sound;
 const getMat = (direction) => {
@@ -61,6 +63,7 @@ const handleCollisions = (room,balls,scoreInfo) => {
                     let Hitdirection = getHitDirection(cube, balls, prop);
                     let colorMatch = cube.userData.color == balls[prop].userData.color;
                     changeScore(Hitdirection,colorMatch,scoreInfo);
+                    brokencubes(room,cube);
                     room.remove(cube);
                 }
             }

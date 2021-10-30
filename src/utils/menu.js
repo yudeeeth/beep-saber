@@ -150,7 +150,7 @@ function updateButtons(scene,renderer, camera, balls) {
     pointer.x = balls.right.position.x * 6/10;
     pointer.y = balls.right.position.y - 1.5;
 	let intersect;
-	// pointer = mouse;
+	pointer = mouse;
     if ( pointer.x !== null && pointer.y !== null ) {
         raycaster.setFromCamera( pointer, camera );
 		intersect = raycast();

@@ -176,8 +176,8 @@ function App(props) {
 		renderer.outputEncoding = THREE.sRGBEncoding;
 		renderer.xr.enabled = true;
 		container.appendChild(renderer.domElement);
-		// let controls = new OrbitControls(camera,renderer.domElement);
-		// controls.update();
+		let controls = new OrbitControls(camera,renderer.domElement);
+		controls.update();
 		window.addEventListener("resize", () => { onWindowResize(); });
 		document.body.appendChild(VRButton.createButton(renderer));
 

@@ -22,7 +22,7 @@ let usedefaultsong = true;
 let notes,bpm;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
-let redCubeObj, blueCubeObj, redDotCubeObj, blueDotCubeObj, blueArrowObj, sphereObj;
+let redCubeObj, blueCubeObj, redDotCubeObj, blueDotCubeObj, blueArrowObj, sphereObj,bluehalfCubeObj;
 let tableObjs = [];
 let scoreText, comboText2, songBar, rightUItext, songCover;
 let room;
@@ -159,17 +159,52 @@ const loadTable = async (room) => {
     tableObj.position.z = -7;
 }
 
-// const loadbluehalfcube = async (room) =>{
-//     let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
-//     bluehalfCubeObj = await loader.loadAsync(halfcube);
-//     bluehalfCubeObj.material = blueMaterial;
-//     bluehalfCubeObj.rotation.x = -Math.PI / 2;
-//     bluehalfCubeObj.traverse( function ( child ) {
-//         if ( child instanceof THREE.Mesh ) {
-//             child.material = blueMaterial;
-//         }
-//     });
-// }
+const loadbluehalfcube = async (room) =>{
+    let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF 
+    , side: THREE.DoubleSide});
+    let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF 
+        , side: THREE.DoubleSide});
+    bluehalfCubeObj = await loader.loadAsync(halfcube);
+    let halfarrowobj = await loader.loadAsync(halfarrow);
+    bluehalfCubeObj.material = blueMaterial;
+    // const xAxis = new THREE.Vector3(1, 0, 0);
+    // const xRot = 0;
+    // const xQuaternion = new THREE.Quaternion();
+    // xQuaternion.setFromAxisAngle( xAxis, xRot );
+
+    // const yAxis = new THREE.Vector3(0, 1, 0);
+    // const yRot = Math.PI / 2;
+    // const yQuaternion = new THREE.Quaternion();
+    // yQuaternion.setFromAxisAngle( yAxis, yRot );
+
+    // const zAxis = new THREE.Vector3(0, 0, 1);
+    // const zRot = 0;
+    // const zQuaternion = new THREE.Quaternion();
+    // zQuaternion.setFromAxisAngle( zAxis, zRot );
+    // bluehalfCubeObj.quaternion.multiplyQuaternions(xQuaternion, yQuaternion, zQuaternion);
+    // bluehalfCubeObj.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,0));
+    // bluehalfCubeObj.setRotationFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);
+    // bluehalfCubeObj.setRotationFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI/2);
+    // bluehalfCubeObj.setRotationFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);
+    // (Math.PI/4,Math.PI / 2,0);
+    // bluehalfCubeObj.rotation.x += Math.PI / 2;
+    // bluehalfCubeObj.rotation.z += Math.PI /2;
+    // bluehalfCubeObj.scale.set(1,1,-1);
+    bluehalfCubeObj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+            child.material = blueMaterial;
+        }
+    });
+    bluehalfCubeObj.rotation.x = Math.PI/2;
+    bluehalfCubeObj.rotation.y = Math.PI/2;
+    bluehalfCubeObj.rotation.z = -Math.PI/2;
+    halfarrowobj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+            child.material = whiteMaterial;
+        }
+    });
+    bluehalfCubeObj.add(halfarrowobj);
+}
 
 const loadModels = async (room) => {
     await loadBlueCube();
@@ -177,7 +212,7 @@ const loadModels = async (room) => {
     await loadBlueDotCube();
     await loadRedDotCube();
     // await loadredhalfCube();
-    // await loadbluehalfcube(room);
+    await loadbluehalfcube();
     await loadArrows();
     await loadSphere();
     await loadTable();    
@@ -445,11 +480,11 @@ const getAngle = (direction) =>{
         0 : Math.PI,
         1: 0,
         2: Math.PI/2,
-        3: -Math.PI/2,
+        3: 3 * Math.PI/2,
         4: 3 * Math.PI / 4 ,
-        5: - 3 * Math.PI / 4,
+        5: 2* Math.PI - 3 * Math.PI / 4,
         6: Math.PI / 4,
-        7: -Math.PI/4,
+        7: 2* Math.PI -Math.PI/4,
         8: Math.PI
     }
     return dict[direction];
@@ -481,7 +516,7 @@ function makeCube(room, notes,i,bpm){
     object.userData.objectType = 'obstacle';
     object.userData.radius =  Math.sqrt(3) * side;
     object.userData.color = notes[i]["_type"] % 2 ? "red": "blue";
-    object.rotation.y += getAngle(notes[i]["_cutDirection"]);
+    object.rotation.y = getAngle(notes[i]["_cutDirection"]);
     object.userData.direction = notes[i]["_cutDirection"];
     object.userData.velocity = 12;
     object.userData.index = i;
@@ -504,9 +539,68 @@ const preload = async (_room,mapId,song) => {
 const startspawn = async (audio) => {
     spawnObjectCallbacks(room,notes,0,bpm);
     const convertToTime = 60/bpm;
-    setTimeout(()=>{
-        audio.play();
-    },25/12 * convertToTime * 1000);
+    // setTimeout(()=>{
+    //     audio.play();
+    // },25/12 * convertToTime * 1000);
+
+
+    // let obj = bluehalfCubeObj.clone();
+    // rotateAroundWorldAxis(obj,new THREE.Vector3(0,1,0),Math.PI/2);
+    // obj.scale.set(1,1,-1);
+    // // rotateAroundWorldAxis(obj,new THREE.Vector3(0,0,1),Math.PI/4);
+    // room.add(obj);
 }
 
-export { makeHUD, preload ,startspawn, updateScore , makeLasers, setdefaultimage }
+const getvelocity = (direction,minus) => {
+    let root2 = Math.sqrt(2);
+    let scale = 2;
+    let dict = {
+        0: [1,0],
+        1: [-1,0],
+        2: [0,1],
+        3: [0,-1],
+        4: [root2,root2],
+        5: [root2,-root2],
+        6: [-root2,root2],
+        7: [-root2,-root2],
+        8: [1,0]
+    }
+    return [minus * scale * dict[direction][0], minus * scale * dict[direction][1],6];
+}
+
+const brokencubes = (room, cube) => {
+    // return;
+    let color = cube.userData.color;
+    let direction = cube.userData.direction;
+    let cuberight = bluehalfCubeObj.clone();
+    let cubeleft = bluehalfCubeObj.clone();
+    let side = 0.25;
+    let root2 = Math.sqrt(2) * 3;
+    rotateAroundWorldAxis(cuberight,new THREE.Vector3(0,1,0),Math.PI/2);
+    rotateAroundWorldAxis(cubeleft,new THREE.Vector3(0,1,0),Math.PI/2);
+    rotateAroundWorldAxis(cuberight,new THREE.Vector3(0,0,1), -getAngle(direction));
+    rotateAroundWorldAxis(cubeleft,new THREE.Vector3(0,0,1), -getAngle(direction));
+    // console.log("broken");
+    cuberight.position.set(cube.position.x,cube.position.y,cube.position.z);
+    cubeleft.position.set(cube.position.x,cube.position.y,cube.position.z);
+    cubeleft.scale.set(side,side,-side);
+    cuberight.scale.set(side,side,side);
+    cubeleft.userData.objectType = "broken";
+    cuberight.userData.objectType = "broken";
+    cuberight.userData.velocity = new THREE.Vector3(...getvelocity(direction,-1));
+    cubeleft.userData.velocity = new THREE.Vector3(...getvelocity(direction,1));
+    cubeleft.userData.velocity.set(...getvelocity(direction,-1),12);
+    cuberight.userData.velocity.set(...getvelocity(direction,1),12);
+    room.add(cuberight);
+    room.add(cubeleft);
+}
+
+function rotateAroundWorldAxis(object, axis, radians) {
+    var rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeRotationAxis( axis.normalize(), radians );
+    rotationMatrix.multiply( object.matrix );                       // pre-multiply
+    object.matrix = rotationMatrix;
+    object.rotation.setFromRotationMatrix( object.matrix );
+}
+
+export { makeHUD, preload ,startspawn, updateScore , makeLasers, brokencubes, setdefaultimage }

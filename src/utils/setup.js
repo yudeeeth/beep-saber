@@ -6,6 +6,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { handleCollisions } from "../components/collisiondetect.js";
 
+
 let state;
 let renderScene,composer;
 let delta=0;
@@ -47,11 +48,16 @@ function render() {
             if(delta == 0) continue;
             let distance_moved = cube.userData.velocity * delta;
             cube.position.z += distance_moved;
-            if (cube.position.z > 4) {
+            if (cube.position.z > 5) {
                 // set state.combo
                 // state.combo = 1;
                 state.room.remove(cube);
             }
+        }
+        else if(cube.userData.objectType === "broken"){
+            cube.position.x += cube.userData.velocity.x * delta;
+            cube.position.y += cube.userData.velocity.y * delta;
+            cube.position.z += cube.userData.velocity.z * delta;
         }
     }
     state.renderer.render(state.scene, state.camera);
