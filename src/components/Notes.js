@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {  OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import cubeModel from "../assets/cube.obj";
@@ -19,10 +19,10 @@ import songcoverimage from "../assets/songs/homura/cover.jpg";
 // import songfile from "../assets/songs/homura/HardStandard.dat";
 
 let usedefaultsong = true;
-let notes,bpm;
+let notes, bpm;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
-let redCubeObj, blueCubeObj, redDotCubeObj, blueDotCubeObj, blueArrowObj, sphereObj,bluehalfCubeObj;
+let redCubeObj, blueCubeObj, redDotCubeObj, blueDotCubeObj, blueArrowObj, sphereObj, bluehalfCubeObj, redhalfCubeObj;
 let tableObjs = [];
 let scoreText, comboText2, songBar, rightUItext, songCover;
 let room;
@@ -31,15 +31,15 @@ const setdefaultimage = (val) => {
     usedefaultsong = val;
 }
 
-const spawnObjectCallbacks = (room,notes,i,bpm) => {
-    const convertToTime = 60/bpm;
-    if(i==0)
-        setTimeout( ()=>{makeCube(room,notes,i,bpm) }, (
+const spawnObjectCallbacks = (room, notes, i, bpm) => {
+    const convertToTime = 60 / bpm;
+    if (i == 0)
+        setTimeout(() => { makeCube(room, notes, i, bpm) }, (
             Math.floor(
                 ((notes[i]["_time"] * convertToTime)
-            ))*1000));
-    else{
-        setTimeout( ()=>{makeCube(room,notes,i,bpm) }, Math.floor(( (notes[i]["_time"] - notes[i-1]["_time"]) * convertToTime )*1000));
+                )) * 1000));
+    else {
+        setTimeout(() => { makeCube(room, notes, i, bpm) }, Math.floor(((notes[i]["_time"] - notes[i - 1]["_time"]) * convertToTime) * 1000));
     }
 }
 
@@ -48,8 +48,8 @@ const loadBlueCube = async () => {
     blueCubeObj = await loader.loadAsync(cubeModel);
     blueCubeObj.material = blueMaterial;
     blueCubeObj.rotation.x = -Math.PI / 2;
-    blueCubeObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    blueCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = blueMaterial;
         }
     });
@@ -60,8 +60,8 @@ const loadRedCube = async () => {
     redCubeObj = await loader.loadAsync(cubeModel);
     redCubeObj.material = redMaterial;
     redCubeObj.rotation.x = -Math.PI / 2;
-    redCubeObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    redCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = redMaterial;
         }
     });
@@ -72,8 +72,8 @@ const loadBlueDotCube = async () => {
     blueDotCubeObj = await loader.loadAsync(cubeModel);
     blueDotCubeObj.material = blueDotMaterial;
     blueDotCubeObj.rotation.x = -Math.PI / 2;
-    blueDotCubeObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    blueDotCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = blueDotMaterial;
         }
     });
@@ -84,8 +84,8 @@ const loadRedDotCube = async () => {
     redDotCubeObj = await loader.loadAsync(cubeModel);
     redDotCubeObj.material = redDotMaterial;
     redDotCubeObj.rotation.x = -Math.PI / 2;
-    redDotCubeObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    redDotCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = redDotMaterial;
         }
     });
@@ -95,21 +95,21 @@ const loadArrows = async () => {
     let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
     blueArrowObj = await loader.loadAsync(arrowModel);
     blueArrowObj.material = whiteMaterial;
-    blueArrowObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    blueArrowObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = whiteMaterial;
         }
     });
-    blueArrowObj.scale.set(0.055,0.055,0.055);
+    blueArrowObj.scale.set(0.055, 0.055, 0.055);
     let flip = 1;
     blueArrowObj.rotation.z = flip * Math.PI / 2;
     blueArrowObj.rotation.y = flip * Math.PI / 2;
     blueArrowObj.position.y = -1.05;
     blueArrowObj.position.z = 0.25;
-    blueArrowObj.userData.objectType = 'arrow';    
-    
+    blueArrowObj.userData.objectType = 'arrow';
+
     let redArrowObj = blueArrowObj.clone();
-    
+
     blueCubeObj.add(blueArrowObj);
     redCubeObj.add(redArrowObj);
 }
@@ -118,17 +118,17 @@ const loadSphere = async () => {
     let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
     sphereObj = await loader.loadAsync(sphereModel);
     sphereObj.material = whiteMaterial;
-    sphereObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    sphereObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = whiteMaterial;
         }
     });
-    sphereObj.scale.set(0.355,0.355,0.355);
+    sphereObj.scale.set(0.355, 0.355, 0.355);
     sphereObj.position.y = -0.75;
-    sphereObj.userData.objectType = 'sphere';    
-    
+    sphereObj.userData.objectType = 'sphere';
+
     let clonedSphereObj = sphereObj.clone();
-    
+
     blueDotCubeObj.add(sphereObj);
     redDotCubeObj.add(clonedSphereObj);
 }
@@ -136,16 +136,16 @@ const loadSphere = async () => {
 const loadTable = async (room) => {
     let gltfLoader = new GLTFLoader();
     let tableObj = await gltfLoader.loadAsync(tableModel);
-    tableObj = tableObj.scene;    
+    tableObj = tableObj.scene;
     tableObj.children[0].children[0].userData.objectType = "platform";
-    tableObj.scale.set(0.5,0.5,0.5);
+    tableObj.scale.set(0.5, 0.5, 0.5);
 
     let texture = textureLoader.load("./assets/black.jpg");
     texture.encoding = THREE.sRGBEncoding;
     texture.flipY = false;
     let mat, geo;
-    tableObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    tableObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             mat = child.material;
             geo = child.geometry;
             mat.map = texture;
@@ -159,51 +159,60 @@ const loadTable = async (room) => {
     tableObj.position.z = -7;
 }
 
-const loadbluehalfcube = async (room) =>{
-    let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF 
-    , side: THREE.DoubleSide});
-    let whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF 
-        , side: THREE.DoubleSide});
+const loadbluehalfcube = async (room) => {
+    let blueMaterial = new THREE.MeshLambertMaterial({
+        color: 0x0000FF
+        , side: THREE.DoubleSide
+    });
+    let whiteMaterial = new THREE.MeshLambertMaterial({
+        color: 0xFFFFFF
+        , side: THREE.DoubleSide
+    });
     bluehalfCubeObj = await loader.loadAsync(halfcube);
     let halfarrowobj = await loader.loadAsync(halfarrow);
     bluehalfCubeObj.material = blueMaterial;
-    // const xAxis = new THREE.Vector3(1, 0, 0);
-    // const xRot = 0;
-    // const xQuaternion = new THREE.Quaternion();
-    // xQuaternion.setFromAxisAngle( xAxis, xRot );
-
-    // const yAxis = new THREE.Vector3(0, 1, 0);
-    // const yRot = Math.PI / 2;
-    // const yQuaternion = new THREE.Quaternion();
-    // yQuaternion.setFromAxisAngle( yAxis, yRot );
-
-    // const zAxis = new THREE.Vector3(0, 0, 1);
-    // const zRot = 0;
-    // const zQuaternion = new THREE.Quaternion();
-    // zQuaternion.setFromAxisAngle( zAxis, zRot );
-    // bluehalfCubeObj.quaternion.multiplyQuaternions(xQuaternion, yQuaternion, zQuaternion);
-    // bluehalfCubeObj.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,0));
-    // bluehalfCubeObj.setRotationFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);
-    // bluehalfCubeObj.setRotationFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI/2);
-    // bluehalfCubeObj.setRotationFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);
-    // (Math.PI/4,Math.PI / 2,0);
-    // bluehalfCubeObj.rotation.x += Math.PI / 2;
-    // bluehalfCubeObj.rotation.z += Math.PI /2;
-    // bluehalfCubeObj.scale.set(1,1,-1);
-    bluehalfCubeObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    bluehalfCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = blueMaterial;
         }
     });
-    bluehalfCubeObj.rotation.x = Math.PI/2;
-    bluehalfCubeObj.rotation.y = Math.PI/2;
-    bluehalfCubeObj.rotation.z = -Math.PI/2;
-    halfarrowobj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+    bluehalfCubeObj.rotation.x = Math.PI / 2;
+    bluehalfCubeObj.rotation.y = Math.PI / 2;
+    bluehalfCubeObj.rotation.z = -Math.PI / 2;
+    halfarrowobj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
             child.material = whiteMaterial;
         }
     });
     bluehalfCubeObj.add(halfarrowobj);
+}
+
+const loadredhalfCube = async (room) => {
+    let redMaterial = new THREE.MeshLambertMaterial({
+        color: 0xFF0000
+        , side: THREE.DoubleSide
+    });
+    let whiteMaterial = new THREE.MeshLambertMaterial({
+        color: 0xFFFFFF
+        , side: THREE.DoubleSide
+    });
+    redhalfCubeObj = await loader.loadAsync(halfcube);
+    let halfarrowobj = await loader.loadAsync(halfarrow);
+    redhalfCubeObj.material = redMaterial;
+    redhalfCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+            child.material = redMaterial;
+        }
+    });
+    redhalfCubeObj.rotation.x = Math.PI / 2;
+    redhalfCubeObj.rotation.y = Math.PI / 2;
+    redhalfCubeObj.rotation.z = -Math.PI / 2;
+    halfarrowobj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+            child.material = whiteMaterial;
+        }
+    });
+    redhalfCubeObj.add(halfarrowobj);
 }
 
 const loadModels = async (room) => {
@@ -211,11 +220,11 @@ const loadModels = async (room) => {
     await loadRedCube();
     await loadBlueDotCube();
     await loadRedDotCube();
-    // await loadredhalfCube();
+    await loadredhalfCube();
     await loadbluehalfcube();
     await loadArrows();
     await loadSphere();
-    await loadTable();    
+    await loadTable();
 };
 
 const updateScore = (scoreInfo) => {
@@ -227,7 +236,7 @@ const updateScore = (scoreInfo) => {
         content: `${scoreInfo.combo}`,
         fontSize: 0.25
     });
-    
+
 }
 
 const updateSong = (audio) => {
@@ -236,10 +245,10 @@ const updateSong = (audio) => {
     let totalMins = Math.floor(audio.duration / 60);
     let totalSecs = Math.floor(audio.duration % 60);
 
-    if(currSecs < 10) currSecs = "0" + currSecs;
-    if(currMins < 10) currMins = "0" + currMins;
-    if(totalSecs < 10) totalSecs = "0" + totalSecs;
-    if(totalMins < 10) totalMins = "0" + totalMins;
+    if (currSecs < 10) currSecs = "0" + currSecs;
+    if (currMins < 10) currMins = "0" + currMins;
+    if (totalSecs < 10) totalSecs = "0" + totalSecs;
+    if (totalMins < 10) totalMins = "0" + totalMins;
 
     rightUItext.set({
         content: `${currMins} : ${currSecs} / ${totalMins} : ${totalSecs}`
@@ -252,8 +261,8 @@ const updateSong = (audio) => {
     });
 }
 
-const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
-	const leftHud = new ThreeMeshUI.Block({
+const makeHUD = (scene, options, scoreInfo, mapId, song, audio) => {
+    const leftHud = new ThreeMeshUI.Block({
         width: options.left.style.width,
         height: options.left.style.height,
         padding: options.left.style.padding,
@@ -262,8 +271,8 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
         padding: 0.2,
         borderRadius: 0.2,
     });
-    leftHud.position.set(options.left.position.x,options.left.position.y,options.left.position.z);
-    leftHud.rotation.set(options.left.rotation.x,options.left.rotation.y,options.left.rotation.z);
+    leftHud.position.set(options.left.position.x, options.left.position.y, options.left.position.z);
+    leftHud.rotation.set(options.left.rotation.x, options.left.rotation.y, options.left.rotation.z);
 
     const scoreSection = new ThreeMeshUI.Block({
         width: options.left.style.width,
@@ -272,7 +281,7 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
         fontTexture: FontImage,
         backgroundOpacity: 0,
     });
-    scoreSection.position.set(0,5,0);
+    scoreSection.position.set(0, 5, 0);
     const comboSection = new ThreeMeshUI.Block({
         width: 0.6,
         height: 0.6,
@@ -280,10 +289,10 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
         fontTexture: FontImage,
         justifyContent: 'center',
         alignContent: 'center',
-		borderRadius: 0.3,
-		borderWidth: 0.03,
-		borderColor: new THREE.Color( 1, 0.5, 1 )
-	});
+        borderRadius: 0.3,
+        borderWidth: 0.03,
+        borderColor: new THREE.Color(1, 0.5, 1)
+    });
     leftHud.add(scoreSection);
     leftHud.add(comboSection);
     scoreText = new ThreeMeshUI.Text({
@@ -293,7 +302,7 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
     const comboText = new ThreeMeshUI.Text({
         content: `X`,
         fontSize: 0.10
-    });   
+    });
     comboText2 = new ThreeMeshUI.Text({
         content: `${scoreInfo.combo}`,
         fontSize: 0.20
@@ -301,19 +310,19 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
     scoreSection.add(scoreText);
     comboSection.add(comboText);
     comboSection.add(comboText2);
-	
+
     const rightHud = new ThreeMeshUI.Block({
         width: options.right.style.width,
         height: options.right.style.height,
         padding: options.right.style.padding,
         borderRadius: 0.2,
     })
-    rightHud.position.set(options.right.position.x,options.right.position.y, options.right.position.z);
-    rightHud.rotation.set(options.right.rotation.x,options.right.rotation.y, options.right.rotation.z);
+    rightHud.position.set(options.right.position.x, options.right.position.y, options.right.position.z);
+    rightHud.rotation.set(options.right.rotation.x, options.right.rotation.y, options.right.rotation.z);
 
     let songName = song['_songName'];
-    songName = songName.substring(0,15);
-    
+    songName = songName.substring(0, 15);
+
     const songNameSection = new ThreeMeshUI.Block({
         width: 1.25,
         height: 0.05,
@@ -329,12 +338,12 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
     });
 
     const songCover = new ThreeMeshUI.Block({
-        width:  0.70,
+        width: 0.70,
         height: 0.70,
-        borderRadius:0,
+        borderRadius: 0,
     });
 
-    if(!usedefaultsong){
+    if (!usedefaultsong) {
         new THREE.TextureLoader().load(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
             songCover.set({
                 backgroundTexture: texture,
@@ -342,7 +351,7 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
             });
         });
     }
-    else{
+    else {
         new THREE.TextureLoader().load(songcoverimage, (texture) => {
             songCover.set({
                 backgroundTexture: texture,
@@ -358,12 +367,12 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
         width: 1.25,
         height: 0.015,
         borderRadius: 0.3,
-		borderWidth: 0.03,
-		borderColor: new THREE.Color( 1, 1, 1 ),
+        borderWidth: 0.03,
+        borderColor: new THREE.Color(1, 1, 1),
         alignContent: 'left'
     });
     songBGBar.autoLayout = false;
-    songBGBar.position.set(0,-0.4,0);
+    songBGBar.position.set(0, -0.4, 0);
     rightHud.add(songBGBar);
 
     let progressPercentage = 0;
@@ -373,14 +382,14 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
         width: progressWidth,
         height: 0.015,
         borderRadius: 0.3,
-		borderWidth: 0.03,
-		borderColor: new THREE.Color( 92/255, 202/255, 255/255 ),
+        borderWidth: 0.03,
+        borderColor: new THREE.Color(92 / 255, 202 / 255, 255 / 255),
     });
 
     songBGBar.add(songBar);
 
     const songTextSection = new ThreeMeshUI.Block({
-        width : options.right.style.width,
+        width: options.right.style.width,
         height: 0.3,
         fontFamily: FontJSON,
         fontTexture: FontImage,
@@ -394,97 +403,97 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
     songTextSection.add(rightUItext);
     rightHud.add(songTextSection);
 
-    setInterval(()=>{
-        if(audio!==undefined){
+    setInterval(() => {
+        if (audio !== undefined) {
             updateSong(audio);
         }
-    },1000);
+    }, 1000);
 
     scene.add(rightHud);
     scene.add(leftHud);
 }
 
-const makeLasers = (scene,options) => {
+const makeLasers = (scene, options) => {
     let rightLasers = [];
     let leftLasers = [];
-    for(let i=0;i<5;i++){
+    for (let i = 0; i < 5; i++) {
         rightLasers.push(new ThreeMeshUI.Block({
             width: 0.1,
             height: 40,
             borderWidth: 0.04,
-            borderColor : new THREE.Color(92/255,202/255,1),
-            backgroundColor: new THREE.Color(1,1,1)
+            borderColor: new THREE.Color(92 / 255, 202 / 255, 1),
+            backgroundColor: new THREE.Color(1, 1, 1)
         }));
-        rightLasers[i].position.set(10,Math.sqrt(3)*5,-i*5-3);
-        rightLasers[i].rotation.set(0,0,-Math.PI/6);
+        rightLasers[i].position.set(10, Math.sqrt(3) * 5, -i * 5 - 3);
+        rightLasers[i].rotation.set(0, 0, -Math.PI / 6);
         scene.add(rightLasers[i]);
         leftLasers.push(new ThreeMeshUI.Block({
             width: 0.1,
             height: 40,
             borderWidth: 0.04,
-            borderColor : new THREE.Color(92/255,202/255,1),
-            backgroundColor: new THREE.Color(1,1,1)
+            borderColor: new THREE.Color(92 / 255, 202 / 255, 1),
+            backgroundColor: new THREE.Color(1, 1, 1)
         }));
-        leftLasers[i].position.set(-10,Math.sqrt(3)*5,-i*5-3);
-        leftLasers[i].rotation.set(0,0,Math.PI/6);
+        leftLasers[i].position.set(-10, Math.sqrt(3) * 5, -i * 5 - 3);
+        leftLasers[i].rotation.set(0, 0, Math.PI / 6);
         scene.add(leftLasers[i]);
     }
     let redrightLasers = [];
     let redleftLasers = [];
-    for(let i=0;i<5;i++){
+    for (let i = 0; i < 5; i++) {
         redrightLasers.push(new ThreeMeshUI.Block({
             width: 0.1,
             height: 40,
             borderWidth: 0.04,
-            borderColor : new THREE.Color(255/255,1/255,1/255),
-            backgroundColor: new THREE.Color(1,1,1)
+            borderColor: new THREE.Color(255 / 255, 1 / 255, 1 / 255),
+            backgroundColor: new THREE.Color(1, 1, 1)
         }));
-        redrightLasers[i].position.set(-10,0,-i*5 -15);
-        redrightLasers[i].rotation.set(0,0,-Math.PI/6);
+        redrightLasers[i].position.set(-10, 0, -i * 5 - 15);
+        redrightLasers[i].rotation.set(0, 0, -Math.PI / 6);
         scene.add(redrightLasers[i]);
         redleftLasers.push(new ThreeMeshUI.Block({
             width: 0.1,
             height: 40,
             borderWidth: 0.04,
-            borderColor : new THREE.Color(255/255,1/255,1/255),
-            backgroundColor: new THREE.Color(1,1,1)
+            borderColor: new THREE.Color(255 / 255, 1 / 255, 1 / 255),
+            backgroundColor: new THREE.Color(1, 1, 1)
         }));
-        redleftLasers[i].position.set(10,0,-i*5 -15);
-        redleftLasers[i].rotation.set(0,0,Math.PI/6);
+        redleftLasers[i].position.set(10, 0, -i * 5 - 15);
+        redleftLasers[i].rotation.set(0, 0, Math.PI / 6);
         scene.add(redleftLasers[i]);
     }
     let righthand = new ThreeMeshUI.Block({
         width: 0.1,
         height: 40,
         borderWidth: 0.04,
-        borderColor : new THREE.Color(92/255,202/255,1),
-        backgroundColor: new THREE.Color(1,1,1)
+        borderColor: new THREE.Color(92 / 255, 202 / 255, 1),
+        backgroundColor: new THREE.Color(1, 1, 1)
     });
-    righthand.position.set(1.45,0.1,0);
-    righthand.rotation.set(-Math.PI/2,0,0);
+    righthand.position.set(1.45, 0.1, 0);
+    righthand.rotation.set(-Math.PI / 2, 0, 0);
     scene.add(righthand);
     let lefthand = new ThreeMeshUI.Block({
         width: 0.1,
         height: 40,
         borderWidth: 0.04,
-        borderColor : new THREE.Color(92/255,202/255,1),
-        backgroundColor: new THREE.Color(1,1,1)
+        borderColor: new THREE.Color(92 / 255, 202 / 255, 1),
+        backgroundColor: new THREE.Color(1, 1, 1)
     });
-    lefthand.position.set(-1.45,0.1,0);
-    lefthand.rotation.set(-Math.PI/2,0,0);
+    lefthand.position.set(-1.45, 0.1, 0);
+    lefthand.rotation.set(-Math.PI / 2, 0, 0);
     scene.add(lefthand);
 }
 
-const getAngle = (direction) =>{
+const getAngle = (direction) => {
     let dict = {
-        0 : Math.PI,
+        0: Math.PI,
         1: 0,
-        2: Math.PI/2,
-        3: 3 * Math.PI/2,
-        4: 3 * Math.PI / 4 ,
-        5: 2* Math.PI - 3 * Math.PI / 4,
+        2: Math.PI / 2,
+        3: 3 * Math.PI / 2,
+        4: 3 * Math.PI / 4,
+        5: 2 * Math.PI - 3 * Math.PI / 4,
         6: Math.PI / 4,
-        7: 2* Math.PI -Math.PI/4,
+        7: 2 * Math.PI - Math.PI / 4,
         8: Math.PI
     }
     return dict[direction];
@@ -493,40 +502,40 @@ const getAngle = (direction) =>{
 const setPosition = (object, notes) => {
     let row = notes["_lineLayer"];
     let column = notes["_lineIndex"];
-    object.position.x = -9/8 + column*3/4;
-    object.position.y = 6/8 + row*3/4;
+    object.position.x = -9 / 8 + column * 3 / 4;
+    object.position.y = 6 / 8 + row * 3 / 4;
 }
 
 
-function makeCube(room, notes,i,bpm){
-    if(redCubeObj === undefined || blueCubeObj === undefined || redDotCubeObj === undefined || blueDotCubeObj === undefined)
+function makeCube(room, notes, i, bpm) {
+    if (redCubeObj === undefined || blueCubeObj === undefined || redDotCubeObj === undefined || blueDotCubeObj === undefined)
         return;
-    
-    let object;
-    if(notes[i]["_cutDirection"] === 8)
-        object = notes[i]["_type"] % 2 ? redDotCubeObj.clone(): blueDotCubeObj.clone();
-    else
-        object = notes[i]["_type"] % 2 ? redCubeObj.clone(): blueCubeObj.clone();
-    let side = 0.25;
-    object.scale.set(side,side,side);
 
-    setPosition(object,notes[i]);
+    let object;
+    if (notes[i]["_cutDirection"] === 8)
+        object = notes[i]["_type"] % 2 ? redDotCubeObj.clone() : blueDotCubeObj.clone();
+    else
+        object = notes[i]["_type"] % 2 ? redCubeObj.clone() : blueCubeObj.clone();
+    let side = 0.25;
+    object.scale.set(side, side, side);
+
+    setPosition(object, notes[i]);
     object.position.z = -25;
     // object.userData.velocity = new THREE.Vector3();
     object.userData.objectType = 'obstacle';
-    object.userData.radius =  Math.sqrt(3) * side;
-    object.userData.color = notes[i]["_type"] % 2 ? "red": "blue";
+    object.userData.radius = Math.sqrt(3) * side;
+    object.userData.color = notes[i]["_type"] % 2 ? "red" : "blue";
     object.rotation.y = getAngle(notes[i]["_cutDirection"]);
     object.userData.direction = notes[i]["_cutDirection"];
     object.userData.velocity = 12;
     object.userData.index = i;
     i++;
-    if(i<notes.length)
-    spawnObjectCallbacks(room, notes,i,bpm);
+    if (i < notes.length)
+        spawnObjectCallbacks(room, notes, i, bpm);
     room.add(object);
 }
 
-const preload = async (_room,mapId,song) => {
+const preload = async (_room, mapId, song) => {
     room = _room;
     notes = song['_notes'];
     bpm = song['_beatsPerMinute'];
@@ -537,11 +546,13 @@ const preload = async (_room,mapId,song) => {
 }
 
 const startspawn = async (audio) => {
-    spawnObjectCallbacks(room,notes,0,bpm);
-    const convertToTime = 60/bpm;
-    // setTimeout(()=>{
-    //     audio.play();
-    // },25/12 * convertToTime * 1000);
+    // console.log("startign spawn");
+    spawnObjectCallbacks(room, notes, 0, bpm);
+    const convertToTime = 60 / bpm;
+    setTimeout(() => {
+        audio.volume = 0.5;
+        audio.play();
+    }, 25 / 12 * convertToTime * 1000);
 
 
     // let obj = bluehalfCubeObj.clone();
@@ -551,56 +562,61 @@ const startspawn = async (audio) => {
     // room.add(obj);
 }
 
-const getvelocity = (direction,minus) => {
+const getvelocity = (direction, minus) => {
     let root2 = Math.sqrt(2);
     let scale = 2;
     let dict = {
-        0: [1,0],
-        1: [-1,0],
-        2: [0,1],
-        3: [0,-1],
-        4: [root2,root2],
-        5: [root2,-root2],
-        6: [-root2,root2],
-        7: [-root2,-root2],
-        8: [1,0]
+        0: [1, 0],
+        1: [-1, 0],
+        2: [0, 1],
+        3: [0, -1],
+        4: [root2, root2],
+        5: [root2, -root2],
+        6: [-root2, root2],
+        7: [-root2, -root2],
+        8: [1, 0]
     }
-    return [minus * scale * dict[direction][0], minus * scale * dict[direction][1],6];
+    return [minus * scale * dict[direction][0], minus * scale * dict[direction][1], 6];
 }
 
 const brokencubes = (room, cube) => {
     // return;
     let color = cube.userData.color;
     let direction = cube.userData.direction;
-    let cuberight = bluehalfCubeObj.clone();
-    let cubeleft = bluehalfCubeObj.clone();
+    let cuberight, cubeleft;
+    if (color == "blue") {
+        cuberight = bluehalfCubeObj.clone();
+        cubeleft = bluehalfCubeObj.clone();
+    }
+    else {
+        cuberight = redhalfCubeObj.clone();
+        cubeleft = redhalfCubeObj.clone();
+    }
     let side = 0.25;
-    let root2 = Math.sqrt(2) * 3;
-    rotateAroundWorldAxis(cuberight,new THREE.Vector3(0,1,0),Math.PI/2);
-    rotateAroundWorldAxis(cubeleft,new THREE.Vector3(0,1,0),Math.PI/2);
-    rotateAroundWorldAxis(cuberight,new THREE.Vector3(0,0,1), -getAngle(direction));
-    rotateAroundWorldAxis(cubeleft,new THREE.Vector3(0,0,1), -getAngle(direction));
-    // console.log("broken");
-    cuberight.position.set(cube.position.x,cube.position.y,cube.position.z);
-    cubeleft.position.set(cube.position.x,cube.position.y,cube.position.z);
-    cubeleft.scale.set(side,side,-side);
-    cuberight.scale.set(side,side,side);
+    rotateAroundWorldAxis(cuberight, new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    rotateAroundWorldAxis(cubeleft, new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    rotateAroundWorldAxis(cuberight, new THREE.Vector3(0, 0, 1), -getAngle(direction));
+    rotateAroundWorldAxis(cubeleft, new THREE.Vector3(0, 0, 1), -getAngle(direction));
+    cuberight.position.set(cube.position.x, cube.position.y, cube.position.z);
+    cubeleft.position.set(cube.position.x, cube.position.y, cube.position.z);
+    cubeleft.scale.set(side, side, -side);
+    cuberight.scale.set(side, side, side);
     cubeleft.userData.objectType = "broken";
     cuberight.userData.objectType = "broken";
-    cuberight.userData.velocity = new THREE.Vector3(...getvelocity(direction,-1));
-    cubeleft.userData.velocity = new THREE.Vector3(...getvelocity(direction,1));
-    cubeleft.userData.velocity.set(...getvelocity(direction,-1),12);
-    cuberight.userData.velocity.set(...getvelocity(direction,1),12);
+    cuberight.userData.velocity = new THREE.Vector3(...getvelocity(direction, -1));
+    cubeleft.userData.velocity = new THREE.Vector3(...getvelocity(direction, 1));
+    cubeleft.userData.velocity.set(...getvelocity(direction, -1), 12);
+    cuberight.userData.velocity.set(...getvelocity(direction, 1), 12);
     room.add(cuberight);
     room.add(cubeleft);
 }
 
 function rotateAroundWorldAxis(object, axis, radians) {
     var rotationMatrix = new THREE.Matrix4();
-    rotationMatrix.makeRotationAxis( axis.normalize(), radians );
-    rotationMatrix.multiply( object.matrix );                       // pre-multiply
+    rotationMatrix.makeRotationAxis(axis.normalize(), radians);
+    rotationMatrix.multiply(object.matrix);                       // pre-multiply
     object.matrix = rotationMatrix;
-    object.rotation.setFromRotationMatrix( object.matrix );
+    object.rotation.setFromRotationMatrix(object.matrix);
 }
 
-export { makeHUD, preload ,startspawn, updateScore , makeLasers, brokencubes, setdefaultimage }
+export { makeHUD, preload, startspawn, updateScore, makeLasers, brokencubes, setdefaultimage }

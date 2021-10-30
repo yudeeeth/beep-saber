@@ -33,7 +33,8 @@ const makeMenu = (scene,audio) => {
         padding: 0.2,
         fontFamily: FontJSON,
         fontTexture: FontImage,
-    })
+    });
+	vrUI.name = "vrui";
     vrUI.position.set(0, 1.5, 1);
     vrUI.rotation.x = -0.55;
     makebutton(scene,vrUI,audio);
@@ -120,10 +121,12 @@ const makebutton = (scene,vrUI,audio)=>{
 				defaultstart=true;
 			}
 			else{
-				(function(){
-					startspawn(audio);
-					scene.remove(vrUI);
-				})()
+				// console.log("onset menu");
+				startspawn(audio);
+				console.log(scene.getObjectByName("vrui"));
+				scene.remove(vrUI);
+				console.log(scene.getObjectByName("vrui"));
+				
 			}
 		}
 	});
@@ -150,7 +153,7 @@ function updateButtons(scene,renderer, camera, balls) {
     pointer.x = balls.right.position.x * 6/10;
     pointer.y = balls.right.position.y - 1.5;
 	let intersect;
-	pointer = mouse;
+	// pointer = mouse;
     if ( pointer.x !== null && pointer.y !== null ) {
         raycaster.setFromCamera( pointer, camera );
 		intersect = raycast();
@@ -158,7 +161,7 @@ function updateButtons(scene,renderer, camera, balls) {
 
 	// Update targeted button state (if any)
 
-	if ( intersect && intersect.object.isUI ) {
+	if ( intersect && intersect.object.isUI && scene.getObjectByName("vrui") !== undefined ) {
 
 		if ( selectState ) {
 
