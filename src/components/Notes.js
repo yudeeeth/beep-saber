@@ -9,7 +9,16 @@ import tableModel from "../assets/new.glb";
 import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
+import halfarrow from "../assets/halfarrow.obj";
+import halfarrowleft from "../assets/halfarrowleft.obj";
+import halfcube from "../assets/halfcube.obj";
 
+import songcoverimage from "../assets/songs/homura/cover.jpg";
+// import songogg from "../assets/songs/homura/song.ogg";
+// import songinfo from "../assets/songs/homura/Info.dat";
+// import songfile from "../assets/songs/homura/HardStandard.dat";
+
+let usedefaultsong = true;
 let notes,bpm;
 let loader = new OBJLoader();
 let textureLoader = new THREE.TextureLoader();
@@ -17,6 +26,10 @@ let redCubeObj, blueCubeObj, redDotCubeObj, blueDotCubeObj, blueArrowObj, sphere
 let tableObjs = [];
 let scoreText, comboText2, songBar, rightUItext, songCover;
 let room;
+
+const setdefaultimage = (val) => {
+    usedefaultsong = val;
+}
 
 const spawnObjectCallbacks = (room,notes,i,bpm) => {
     const convertToTime = 60/bpm;
@@ -146,11 +159,25 @@ const loadTable = async (room) => {
     tableObj.position.z = -7;
 }
 
+// const loadbluehalfcube = async (room) =>{
+//     let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
+//     bluehalfCubeObj = await loader.loadAsync(halfcube);
+//     bluehalfCubeObj.material = blueMaterial;
+//     bluehalfCubeObj.rotation.x = -Math.PI / 2;
+//     bluehalfCubeObj.traverse( function ( child ) {
+//         if ( child instanceof THREE.Mesh ) {
+//             child.material = blueMaterial;
+//         }
+//     });
+// }
+
 const loadModels = async (room) => {
     await loadBlueCube();
     await loadRedCube();
     await loadBlueDotCube();
     await loadRedDotCube();
+    // await loadredhalfCube();
+    // await loadbluehalfcube(room);
     await loadArrows();
     await loadSphere();
     await loadTable();    
@@ -272,13 +299,22 @@ const makeHUD = (scene,options,scoreInfo,mapId,song,audio) => {
         borderRadius:0,
     });
 
-    new THREE.TextureLoader().load(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
-        songCover.set({
-            backgroundTexture: texture,
-            backgroundOpacity: 0.7,
+    if(!usedefaultsong){
+        new THREE.TextureLoader().load(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
+            songCover.set({
+                backgroundTexture: texture,
+                backgroundOpacity: 0.7,
+            });
         });
-    });
-    
+    }
+    else{
+        new THREE.TextureLoader().load(songcoverimage, (texture) => {
+            songCover.set({
+                backgroundTexture: texture,
+                backgroundOpacity: 0.7,
+            });
+        });
+    }
     songNameSection.add(songNameText);
     rightHud.add(songCover);
     rightHud.add(songNameSection);
@@ -473,4 +509,4 @@ const startspawn = async (audio) => {
     },25/12 * convertToTime * 1000);
 }
 
-export { makeHUD, preload ,startspawn, updateScore , makeLasers }
+export { makeHUD, preload ,startspawn, updateScore , makeLasers, setdefaultimage }

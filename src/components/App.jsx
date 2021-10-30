@@ -179,7 +179,6 @@ function App(props) {
 		// let controls = new OrbitControls(camera,renderer.domElement);
 		// controls.update();
 		window.addEventListener("resize", () => { onWindowResize(); });
-
 		document.body.appendChild(VRButton.createButton(renderer));
 
 	}
