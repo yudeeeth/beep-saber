@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/beep-saber/static/js/main.9cad3da1.chunk.js",
+    "main.js": "/beep-saber/static/js/main.fff38dec.chunk.js",
     "runtime-main.js": "/beep-saber/static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.cd9464a6.chunk.js": "/beep-saber/static/js/2.cd9464a6.chunk.js",
+    "static/js/2.bcc51acd.chunk.js": "/beep-saber/static/js/2.bcc51acd.chunk.js",
     "index.html": "/beep-saber/index.html",
-    "static/js/2.cd9464a6.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.cd9464a6.chunk.js.LICENSE.txt",
+    "static/js/2.bcc51acd.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.bcc51acd.chunk.js.LICENSE.txt",
     "static/media/HardStandard.cf3a0b56.dat": "/beep-saber/static/media/HardStandard.cf3a0b56.dat",
     "static/media/HitSound.2dc20224.ogg": "/beep-saber/static/media/HitSound.2dc20224.ogg",
     "static/media/Info.d4d4f21d.dat": "/beep-saber/static/media/Info.d4d4f21d.dat",
@@ -21,7 +21,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.cd9464a6.chunk.js",
-    "static/js/main.9cad3da1.chunk.js"
+    "static/js/2.bcc51acd.chunk.js",
+    "static/js/main.fff38dec.chunk.js"
   ]
 }
