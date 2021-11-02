@@ -29,10 +29,16 @@ function App(props) {
 		socket.on("connect", () => {
 			console.log("Connected to", socket.id);
 		});
-
+		// let data = {
+		// 	"roomcode": roomcode,
+		// 	"position" : {
+		// 	  left: results.poseLandmarks[15],
+		// 	  right: results.poseLandmarks[16],
+		// 	}
+		//   }
 		socket.on("coords", (coords) => {
-			if (coords[0] == roomcode)
-				moveBallsUsing(coords.slice(1));
+			if (coords["roomcode"] == roomcode)
+				moveBallsUsing(coords["position"]);
 		});
 
 	}, []);
@@ -45,25 +51,41 @@ function App(props) {
 	}, [isStarted]);
 
 	const moveBallsUsing = (coords) => {
-		let x, y;
-		[x, y] = convertToWorldCoordsxy(coords);
-		// [z, y2] = convertToWorldCoordsxy(coords);
+		// let x, y;
+		// [x, y] = convertToWorldCoordsxy(coords);
+		// // [z, y2] = convertToWorldCoordsxy(coords);
 
-		let positions = [
-			balls.left.position,
-			balls.right.position
-		];
+		// let positions = [
+		// 	balls.left.position,
+		// 	balls.right.position
+		// ];
+		for(let key in coords){
+			for(let i of ["x","y","z"]){
+				coords[key][i] *= 3; 
+			}
+			coords[key].y = 3 - coords[key].y;
+			coords[key].x = 1.5 - coords[key].x;
+			coords[key].z = coords[key].z;
 
-		let index = coords[0] ? 1 : 0;
-		if (coords.splice(-1)[0] == "front") {
-			positions[index].x = x;
-			positions[index].y = y;
+			// coords[key].y -= 1.5;
+			// coords[key].x -= 1.5;
+			// coords[key].z -= 0.5;
 		}
-		else {
-			positions[index].z = x - 3;
-			positions[index].y = y;
-		}
-		changeBallsPositions(positions);
+		changeBallsPositions(coords);
+		if(euclidianDistance(camera.position,coords["top"]) > 0.3 )
+			changeCameraPosition(coords["top"]);
+	};
+
+	const euclidianDistance = (point1, point2) => {
+		return Math.sqrt(
+		  Math.pow(point1.x - point2.x, 2) +
+		  Math.pow(point1.y - point2.y, 2) +
+		  Math.pow(point1.z - point2.z, 2)
+		);
+	  };
+
+	const changeCameraPosition = (coords) => {
+		camera.position.set(coords.x,camera.position.y,camera.position.z);
 	};
 
 	const convertToWorldCoordsxy = (coords) => {
@@ -71,12 +93,11 @@ function App(props) {
 		let y = 3 - coords[1].y * 3;
 		return [x, y];
 	};
-
+	
 	const createRoom = () => {
 		room = new THREE.Group();
 		scene.add(room);
 		scene.add(new THREE.HemisphereLight(0x606060, 0x404040));
-
 		const light = new THREE.DirectionalLight(0xffffff);
 		light.position.set(1, 1, 1).normalize();
 		scene.add(light);
@@ -103,8 +124,8 @@ function App(props) {
 	}
 
 	const changeBallsPositions = (coords) => {
-		let leftBall = coords[0];
-		let rightBall = coords[1];
+		let leftBall = coords["left"];
+		let rightBall = coords["right"];
 		let arr = ['x', 'y', 'z'];
 		for (let i = 0; i < 3; i++) {
 			balls.left.position[arr[i]] = leftBall[arr[i]];
