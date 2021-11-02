@@ -150,6 +150,7 @@ function updateButtons(scene,renderer, camera, balls) {
 
 	// Find closest intersecting object
     let pointer = new THREE.Vector2();
+	if(balls.right===undefined) return;
     pointer.x = balls.right.position.x * 6/10;
     pointer.y = balls.right.position.y - 1.5;
 	let intersect;

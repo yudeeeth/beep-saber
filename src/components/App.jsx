@@ -7,7 +7,7 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { onWindowResize, animate, initialise, render, glowEffect } from "../utils/setup.js"
 import { makeMenu, makePlayerPlatform } from "../utils/menu.js";
-import { makeHUD, preload, makeLasers } from "./Notes";
+import { makeHUD, preload, makeLasers, returnkatana } from "./Notes";
 
 function App(props) {
 	// globals
@@ -103,13 +103,16 @@ function App(props) {
 		scene.add(light);
 	}
 
-	const createBalls = () => {
+	const createBalls = async () => {
 		let arr = ['left', 'right'];
+		let katanas = await returnkatana();
 		for (let i = 0; i < 2; i++) {
-			const object = new THREE.Mesh(
-				new THREE.SphereGeometry(0.2, 16, 8),
-				new THREE.MeshLambertMaterial({ color: i === 0 ? 0xFF0000 : 0x0000FF })
-			);
+			// const object = new THREE.Mesh(
+			// 	new THREE.CylinderGeometry(0.020,0.025,1.5,8),
+			// 	// new THREE.SphereGeometry(0.2, 16, 8),
+			// 	new THREE.MeshLambertMaterial({ color: i === 0 ? 0xFF0000 : 0x0000FF })
+			// );
+			const object = katanas[i];
 			object.userData.objectType = 'killerBall';
 			object.userData.color = i === 0? "red": "blue";
 			if(i)
@@ -126,12 +129,19 @@ function App(props) {
 	const changeBallsPositions = (coords) => {
 		let leftBall = coords["left"];
 		let rightBall = coords["right"];
+		let axisleft = new THREE.Vector3(-1,0,0);
+		let axisright = new THREE.Vector3(-1,0,0);
+		let vectorleft = new THREE.Vector3(coords.left.x-coords.leftBack.x,coords.left.y-coords.leftBack.y,coords.left.z-coords.leftBack.z)
+		let vectorright = new THREE.Vector3(coords.right.x-coords.rightBack.x,coords.right.y-coords.rightBack.y,coords.right.z-coords.rightBack.z)
+		balls.left.quaternion.setFromUnitVectors(axisleft, vectorleft.clone().normalize());
+		balls.right.quaternion.setFromUnitVectors(axisright, vectorright.clone().normalize());
+		// balls.left.position.copy(vector.clone().multiplyScalar(0.75));
 		let arr = ['x', 'y', 'z'];
 		for (let i = 0; i < 3; i++) {
-			balls.left.position[arr[i]] = leftBall[arr[i]];
+			balls.left.position[arr[i]] = leftBall[arr[i]]  //+ vectorleft[arr[i]]/2;
 		}
 		for (let i = 0; i < 3; i++) {
-			balls.right.position[arr[i]] = rightBall[arr[i]];
+			balls.right.position[arr[i]] = rightBall[arr[i]]  //+ vectorright[arr[i]]/2;
 		}
 	}
 

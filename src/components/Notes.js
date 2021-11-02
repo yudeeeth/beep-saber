@@ -12,6 +12,7 @@ import FontImage from '../assets/Roboto-msdf.png';
 import halfarrow from "../assets/halfarrow.obj";
 import halfarrowleft from "../assets/halfarrowleft.obj";
 import halfcube from "../assets/halfcube.obj";
+import katana from "../assets/blade.obj";
 
 import songcoverimage from "../assets/songs/homura/cover.jpg";
 // import songogg from "../assets/songs/homura/song.ogg";
@@ -226,6 +227,31 @@ const loadModels = async (room) => {
     await loadSphere();
     await loadTable();
 };
+
+const returnkatana = async () => {
+    let redMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+    let redCubeObj = await loader.loadAsync(katana);
+    let blueCubeObj = redCubeObj.clone();
+    redCubeObj.material = redMaterial;
+    redCubeObj.rotation.x = -Math.PI / 2;
+    redCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+            child.material = redMaterial;
+        }
+    });
+    let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
+    blueCubeObj.material = blueMaterial;
+    blueCubeObj.rotation.x = -Math.PI / 2;
+    blueCubeObj.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+            child.material = blueMaterial;
+        }
+    });
+    let reduce = 0.003;
+    redCubeObj.scale.set(reduce,reduce,reduce);
+    blueCubeObj.scale.set(reduce,reduce,reduce);
+    return [redCubeObj,blueCubeObj];
+}
 
 const updateScore = (scoreInfo) => {
     scoreText.set({
@@ -619,4 +645,4 @@ function rotateAroundWorldAxis(object, axis, radians) {
     object.rotation.setFromRotationMatrix(object.matrix);
 }
 
-export { makeHUD, preload, startspawn, updateScore, makeLasers, brokencubes, setdefaultimage }
+export { makeHUD, preload, startspawn, updateScore, makeLasers, brokencubes, setdefaultimage, rotateAroundWorldAxis , returnkatana }

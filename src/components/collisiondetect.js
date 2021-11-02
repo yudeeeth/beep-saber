@@ -56,7 +56,7 @@ const handleCollisions = (room,balls,scoreInfo) => {
             const cube = room.children[i];
             for (let prop in balls) {
                 let dist;
-                if (cube.userData !== null && balls[prop].geometry.boundingSphere !== null) {
+                if (cube.userData !== null && balls[prop].children[0].geometry.boundingSphere !== null) {
                     dist = Math.pow(cube.userData.radius, 2) + Math.pow(balls[prop].userData.radius, 2);
                 }
                 if (cube.position.distanceToSquared(balls[prop].position) < dist) {
