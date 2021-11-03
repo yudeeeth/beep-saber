@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import cubeModel from "../assets/cube.obj";
 import arrowModel from "../assets/arrow.obj";
@@ -12,9 +13,11 @@ import FontImage from '../assets/Roboto-msdf.png';
 import halfarrow from "../assets/halfarrow.obj";
 import halfarrowleft from "../assets/halfarrowleft.obj";
 import halfcube from "../assets/halfcube.obj";
-import katana from "../assets/blade.obj";
-
+import katanaleft from "../assets/full_left.obj";
+import katanaright from "../assets/full_right.obj";
 import songcoverimage from "../assets/songs/homura/cover.jpg";
+import { getscoreinfo } from "../utils/setup.js";
+import { makeGameover } from "../utils/menu.js";
 // import songogg from "../assets/songs/homura/song.ogg";
 // import songinfo from "../assets/songs/homura/Info.dat";
 // import songfile from "../assets/songs/homura/HardStandard.dat";
@@ -230,24 +233,25 @@ const loadModels = async (room) => {
 
 const returnkatana = async () => {
     let redMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-    let redCubeObj = await loader.loadAsync(katana);
-    let blueCubeObj = redCubeObj.clone();
+    // let loader = new STLLoader();
+    let redCubeObj = await loader.loadAsync(katanaleft);
     redCubeObj.material = redMaterial;
-    redCubeObj.rotation.x = -Math.PI / 2;
+    // redCubeObj.rotation.x = -Math.PI / 2;
     redCubeObj.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
             child.material = redMaterial;
         }
     });
+    let blueCubeObj = await loader.loadAsync(katanaright);
     let blueMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF });
     blueCubeObj.material = blueMaterial;
-    blueCubeObj.rotation.x = -Math.PI / 2;
+    // blueCubeObj.rotation.x = -Math.PI / 2;
     blueCubeObj.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
             child.material = blueMaterial;
         }
     });
-    let reduce = 0.003;
+    let reduce = 0.014;
     redCubeObj.scale.set(reduce,reduce,reduce);
     blueCubeObj.scale.set(reduce,reduce,reduce);
     return [redCubeObj,blueCubeObj];
@@ -556,8 +560,14 @@ function makeCube(room, notes, i, bpm) {
     object.userData.velocity = 12;
     object.userData.index = i;
     i++;
-    if (i < notes.length)
+    // if (i < notes.length)
+    if (i < 1)
         spawnObjectCallbacks(room, notes, i, bpm);
+    else {
+        setTimeout(() => {
+            makeGameover(room.parent,getscoreinfo());
+        }, 4000);
+    }
     room.add(object);
 }
 

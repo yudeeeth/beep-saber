@@ -14,6 +14,10 @@ function initialise(props){
     state = props;
 }
 
+function getscoreinfo (){
+    return state.scoreInfo;
+}
+
 function onWindowResize() {
     state.camera.aspect = window.innerWidth / window.innerHeight;
     state.camera.updateProjectionMatrix();
@@ -64,4 +68,4 @@ function render() {
     // composer.render();
 }
 
-export { onWindowResize, animate, glowEffect, handleCollisions, render , initialise};
+export { onWindowResize,getscoreinfo , animate, glowEffect, handleCollisions, render , initialise};

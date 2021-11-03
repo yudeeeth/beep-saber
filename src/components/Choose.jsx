@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import App from "./App.jsx";
 import { setdefaultimage } from './Notes.js';
-import { setdefault } from "../utils/menu.js";
-
+import { setdefault, setgameover, getgameover  } from "../utils/menu.js";
 import songogg from "../assets/songs/homura/song.egg";
 import songinfo from "../assets/songs/homura/Info.dat";
 import songfile from "../assets/songs/homura/HardStandard.dat";
@@ -10,7 +9,7 @@ import songfile from "../assets/songs/homura/HardStandard.dat";
 class Choose extends React.Component {
 
     state = {
-        start: 0,
+        start: false,
         roomcode: null,
         mapURL: "https://as.cdn.beatsaver.com/f65fb6890005d1f6b184c5aaf91c4f98737797ec.zip",
         mapId: "f65fb6890005d1f6b184c5aaf91c4f98737797ec",
@@ -23,8 +22,12 @@ class Choose extends React.Component {
     };
 
     menuOrApp = () => {
-        if (!this.state.start)
-            return this.menu();
+        if (!(this.state.start ))
+            {   console.log("returning menu");
+                // this.setState({start:false});
+                return this.menu();
+            }
+        // setgameover(false);
         return <App key="vrstuff"
             song={this.state.song}
             mapId={this.state.mapId}
@@ -136,6 +139,7 @@ class Choose extends React.Component {
         up = {...this.state.song,...JSON.parse(infoText)};
                 this.setState({song:up});
         setdefaultimage(true);
+        setgameover(this);
         this.setState({start:true});
     }
 

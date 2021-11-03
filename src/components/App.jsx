@@ -129,8 +129,8 @@ function App(props) {
 	const changeBallsPositions = (coords) => {
 		let leftBall = coords["left"];
 		let rightBall = coords["right"];
-		let axisleft = new THREE.Vector3(-1,0,0);
-		let axisright = new THREE.Vector3(-1,0,0);
+		let axisleft = new THREE.Vector3(0,1,0);
+		let axisright = new THREE.Vector3(0,-1,0);
 		let vectorleft = new THREE.Vector3(coords.left.x-coords.leftBack.x,coords.left.y-coords.leftBack.y,coords.left.z-coords.leftBack.z)
 		let vectorright = new THREE.Vector3(coords.right.x-coords.rightBack.x,coords.right.y-coords.rightBack.y,coords.right.z-coords.rightBack.z)
 		balls.left.quaternion.setFromUnitVectors(axisleft, vectorleft.clone().normalize());

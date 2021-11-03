@@ -7,7 +7,8 @@ import { startspawn } from "../components/Notes";
 let objsToTest =[];
 let vrUI;
 let defaultstart = true;
-
+let gameover = false;
+let parent;
 const raycaster = new THREE.Raycaster();
 
 const mouse = new THREE.Vector2();
@@ -20,6 +21,15 @@ window.addEventListener( 'pointermove', ( event )=>{
 	mouse.y = - ( event.clientY / window.innerHeight ) * 3 + 1.5;
 
 });
+
+const setgameover = (parent_) => {
+	parent = parent_;
+
+}
+
+const getgameover = () => {
+	return gameover;
+}
 
 const setdefault = (e) => {
 	console.log(e.target.checked);
@@ -39,6 +49,49 @@ const makeMenu = (scene,audio) => {
     vrUI.rotation.x = -0.55;
     makebutton(scene,vrUI,audio);
     scene.add(vrUI);
+};
+
+const makeGameover = (scene,score) => {
+    let overui = new ThreeMeshUI.Block({
+        width: 1.2,
+        height: 0.7,
+        padding: 0.2,
+        fontFamily: FontJSON,
+        fontTexture: FontImage,
+    });
+	overui.name = "overui";
+    overui.position.set(0, 1.5, 0.5);
+    // overui.rotation.x = -0.55;
+    showScore(scene,overui,score);
+    scene.add(overui);
+	setTimeout(() => {
+		// setgameover(true);
+		parent.setState({start:false});
+		console.log("gameover")
+	}, 3000);
+};
+
+const showScore = (scene,parent,score)=>{
+    const buttonOptions = {
+		width: 0.9,
+		height: 0.3,
+		justifyContent: 'center',
+		alignContent: 'center',
+		margin: 0.02,
+		fontFamily: FontJSON,
+        fontTexture: FontImage,
+		fontSize:0.1,
+		borderRadius: 0.075,
+	};
+
+	const buttonNext = new ThreeMeshUI.Block( buttonOptions );
+	// let textscore = `Score: ${score}`;
+	buttonNext.add(
+		new ThreeMeshUI.Text({ content: `Gameover` })
+	);
+
+	parent.add( buttonNext );
+    // objsToTest.push( buttonNext);
 };
 
 function makePlayerPlatform(scene) {
@@ -74,9 +127,6 @@ const makebutton = (scene,vrUI,audio)=>{
 		borderRadius: 0.075
 	};
 
-	// Options for component.setupState().
-	// It must contain a 'state' parameter, which you will refer to with component.setState( 'name-of-the-state' ).
-
 	const hoveredStateAttributes = {
 		state: "hovered",
 		attributes: {
@@ -97,17 +147,13 @@ const makebutton = (scene,vrUI,audio)=>{
 		},
 	};
 
-	// Buttons creation, with the options objects passed in parameters.
-
 	const buttonNext = new ThreeMeshUI.Block( buttonOptions );
-
-
-	// Add text to buttons
 
 	buttonNext.add(
 		new ThreeMeshUI.Text({ content: "Start" })
 	);
-    const selectedAttributes = {
+    
+	const selectedAttributes = {
 		offset: 0.02,
 		backgroundColor: new THREE.Color( 0x777777 ),
 		fontColor: new THREE.Color( 0x222222 )
@@ -133,17 +179,8 @@ const makebutton = (scene,vrUI,audio)=>{
 	buttonNext.setupState( hoveredStateAttributes );
 	buttonNext.setupState( idleStateAttributes );
 
-	//
-
-
-
-	//
-
 	vrUI.add( buttonNext );
     objsToTest.push( buttonNext);
-	// Create states for the buttons.
-	// In the loop, we will call component.setState( 'state-name' ) when mouse hover or click
-
 };
 
 function updateButtons(scene,renderer, camera, balls) {
@@ -154,7 +191,7 @@ function updateButtons(scene,renderer, camera, balls) {
     pointer.x = balls.right.position.x * 6/10;
     pointer.y = balls.right.position.y - 1.5;
 	let intersect;
-	// pointer = mouse;
+	pointer = mouse;
     if ( pointer.x !== null && pointer.y !== null ) {
         raycaster.setFromCamera( pointer, camera );
 		intersect = raycast();
@@ -217,4 +254,4 @@ function raycast() {
 
 };
 
-export { makeMenu,setdefault, updateButtons,makePlayerPlatform };
+export { makeMenu,makeGameover ,setgameover,getgameover,setdefault, updateButtons,makePlayerPlatform };
