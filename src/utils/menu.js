@@ -3,6 +3,7 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
 import { startspawn } from "../components/Notes";
+import { stopAnimation } from "./setup";
 
 let objsToTest =[];
 let vrUI;
@@ -67,7 +68,9 @@ const makeGameover = (scene,score) => {
 	setTimeout(() => {
 		// setgameover(true);
 		parent.setState({start:false});
-		console.log("gameover")
+		stopAnimation();
+		console.log("gameover");
+
 	}, 3000);
 };
 
@@ -191,7 +194,7 @@ function updateButtons(scene,renderer, camera, balls) {
     pointer.x = balls.right.position.x * 6/10;
     pointer.y = balls.right.position.y - 1.5;
 	let intersect;
-	pointer = mouse;
+	// pointer = mouse;
     if ( pointer.x !== null && pointer.y !== null ) {
         raycaster.setFromCamera( pointer, camera );
 		intersect = raycast();

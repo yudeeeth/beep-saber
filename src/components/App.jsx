@@ -16,7 +16,9 @@ function App(props) {
 	let roomcode = "beepbeep";
 	let scoreInfo = {score:0,combo:1};
 	let {mapId, song, isStarted, audio} = props;
-
+	let lefttrail=[];
+	let righttrail=[];
+	let prevleft,prevright;
 	// do once at the beginning
 	useEffect(() => {
 		const socket = io("https://beep-saber.herokuapp.com/", {
@@ -126,6 +128,88 @@ function App(props) {
 		}
 	}
 
+	const createPolygonFromPoints = (rawPoints,color) => {
+		// var rawPoints = [{
+		// 	"x": 10,
+		// 	"y": 10,
+		// 	"z": 1
+		//   }, {
+		// 	"x": 9.421052631578952,
+		// 	"y": 11.736842105263158,
+		// 	"z": 6.789473684210525
+		//   }, {
+		// 	"x": 5,
+		// 	"y": 12.142857142857142,
+		// 	"z": 7.7142857142857135
+		//   }, {
+		// 	"x": 5.285714285714286,
+		// 	"y": 13,
+		// 	"z": 10.628571428571426
+		//   }, {
+		// 	"x": -1,
+		// 	"y": 13,
+		// 	"z": 10
+		//   }, {
+		// 	"x": 0,
+		// 	"y": 10,
+		// 	"z": 0
+		//   }]
+		  
+		  let points = [];
+		  rawPoints.forEach(r => {
+			  points.push(new THREE.Vector3(r.x, r.y, r.z));
+		  });
+		  
+		  let tri = new THREE.Triangle(points[2], points[1], points[0]);
+		  let normal = new THREE.Vector3();
+		  tri.getNormal(normal);
+		  
+		  let baseNormal = new THREE.Vector3(0, 0, 1);
+		  let quaternion = new THREE.Quaternion().setFromUnitVectors(normal, baseNormal);
+		  let quaternionBack = new THREE.Quaternion().setFromUnitVectors(baseNormal, normal);
+		  
+		  let tempPoints = [];
+		  points.forEach(p => {
+			tempPoints.push(p.clone().applyQuaternion(quaternion));
+		  })
+		  let shape = new THREE.Shape(tempPoints);
+		  let shapeGeom = new THREE.ShapeBufferGeometry(shape);
+		  let material = new THREE.MeshBasicMaterial({
+			color: color,
+			side: THREE.DoubleSide,
+			wireframe: false
+		  });
+		  material.transparent = true;
+		  material.opacity = 0.5;
+		  let mesh = new THREE.Mesh(shapeGeom, material);
+		  console.log(mesh.geometry);
+		  
+		  let box = new THREE.Box3().setFromObject(mesh);
+		  let size = new THREE.Vector3();
+		  box.getSize(size);
+		  let vec3 = new THREE.Vector3(); // temp vector
+		  let attPos = mesh.geometry.attributes.position;
+		  let attUv = mesh.geometry.attributes.uv;
+		  for (let i = 0; i < attPos.count; i++){
+			  vec3.fromBufferAttribute(attPos, i);
+			  attUv.setXY(i,
+				(vec3.x - box.min.x) / size.x,
+			  (vec3.y - box.min.y) / size.y
+			);
+		  }
+		  
+		  // turn vectors' values to a typed array
+		  let bufferPoints = [];
+		  points.slice().forEach( p => {
+			  bufferPoints.push(p.x, p.y, p.z);
+		  });
+		  let F32A = new Float32Array(bufferPoints);
+		  attPos.set(F32A, 0);
+		  mesh.name = `${Math.random()}`;
+		  scene.add(mesh);
+		  return mesh;
+	}
+
 	const changeBallsPositions = (coords) => {
 		let leftBall = coords["left"];
 		let rightBall = coords["right"];
@@ -133,6 +217,89 @@ function App(props) {
 		let axisright = new THREE.Vector3(0,-1,0);
 		let vectorleft = new THREE.Vector3(coords.left.x-coords.leftBack.x,coords.left.y-coords.leftBack.y,coords.left.z-coords.leftBack.z)
 		let vectorright = new THREE.Vector3(coords.right.x-coords.rightBack.x,coords.right.y-coords.rightBack.y,coords.right.z-coords.rightBack.z)
+		if(prevleft === undefined){
+			prevleft = [
+				[balls.left.position.x,balls.left.position.y,balls.left.position.z],
+				[balls.left.position.x + vectorleft.x ,balls.left.position.y+vectorleft.y,balls.left.position.z+ vectorleft.z]
+			];
+			prevright = [
+				[balls.right.position.x,balls.right.position.y,balls.right.position.z],
+				[balls.right.position.x + vectorright.x ,balls.right.position.y+vectorright.y,balls.right.position.z+ vectorright.z]
+			];
+		}
+		else {
+
+			let currleft = [
+				[balls.left.position.x + vectorleft.x ,balls.left.position.y+vectorleft.y,balls.left.position.z+ vectorleft.z],
+				[balls.left.position.x,balls.left.position.y,balls.left.position.z],
+			];
+			let currright = [
+				[balls.right.position.x + vectorright.x ,balls.right.position.y+vectorright.y,balls.right.position.z+ vectorright.z],
+				[balls.right.position.x,balls.right.position.y,balls.right.position.z],
+			];
+
+			let leftarg = [
+				{
+					x: prevleft[0][0],
+					y: prevleft[0][1],
+					z: prevleft[0][2],
+				},
+				{
+					x: prevleft[1][0],
+					y: prevleft[1][1],
+					z: prevleft[1][2],
+				},
+				{
+					x: currleft[0][0],
+					y: currleft[0][1],
+					z: currleft[0][2],
+				},
+				{
+					x: currleft[1][0],
+					y: currleft[1][1],
+					z: currleft[1][2],
+				},
+			];
+
+			let rightarg = [
+				{
+					x: prevright[0][0],
+					y: prevright[0][1],
+					z: prevright[0][2],
+				},
+				{
+					x: prevright[1][0],
+					y: prevright[1][1],
+					z: prevright[1][2],
+				},
+				{
+					x: currright[0][0],
+					y: currright[0][1],
+					z: currright[0][2],
+				},
+				{
+					x: currright[1][0],
+					y: currright[1][1],
+					z: currright[1][2],
+				},
+			]
+			lefttrail.push(createPolygonFromPoints(leftarg,"#e8aea9"));
+			righttrail.push(createPolygonFromPoints(rightarg,"#a9abe8"));
+			if(lefttrail.length >=10 ){
+				scene.remove(lefttrail[0]);
+				scene.remove(righttrail[0]);
+				lefttrail = lefttrail.slice(1);
+				righttrail = righttrail.slice(1);
+			}
+			prevleft = [
+				[balls.left.position.x,balls.left.position.y,balls.left.position.z],
+				[balls.left.position.x + vectorleft.x ,balls.left.position.y+vectorleft.y,balls.left.position.z+ vectorleft.z]
+			];
+			prevright = [
+				[balls.right.position.x,balls.right.position.y,balls.right.position.z],
+				[balls.right.position.x + vectorright.x ,balls.right.position.y+vectorright.y,balls.right.position.z+ vectorright.z]
+			];
+		}
 		balls.left.quaternion.setFromUnitVectors(axisleft, vectorleft.clone().normalize());
 		balls.right.quaternion.setFromUnitVectors(axisright, vectorright.clone().normalize());
 		// balls.left.position.copy(vector.clone().multiplyScalar(0.75));

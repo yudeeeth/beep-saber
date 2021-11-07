@@ -16,7 +16,7 @@ import halfcube from "../assets/halfcube.obj";
 import katanaleft from "../assets/full_left.obj";
 import katanaright from "../assets/full_right.obj";
 import songcoverimage from "../assets/songs/homura/cover.jpg";
-import { getscoreinfo } from "../utils/setup.js";
+import { getscoreinfo} from "../utils/setup.js";
 import { makeGameover } from "../utils/menu.js";
 // import songogg from "../assets/songs/homura/song.ogg";
 // import songinfo from "../assets/songs/homura/Info.dat";

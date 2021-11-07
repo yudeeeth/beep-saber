@@ -28,6 +28,10 @@ function animate() {
     state.renderer.setAnimationLoop(()=>{render();});
 }
 
+function stopAnimation() {
+    state.renderer.setAnimationLoop(null);
+}
+
 const glowEffect = () => {
     renderScene = new RenderPass( state.scene, state.camera );
     const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
@@ -68,4 +72,4 @@ function render() {
     // composer.render();
 }
 
-export { onWindowResize,getscoreinfo , animate, glowEffect, handleCollisions, render , initialise};
+export { onWindowResize,getscoreinfo , animate, glowEffect, handleCollisions, render , initialise , stopAnimation};
