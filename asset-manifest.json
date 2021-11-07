@@ -1,18 +1,19 @@
 {
   "files": {
-    "main.js": "/beep-saber/static/js/main.c79b3775.chunk.js",
+    "main.js": "/beep-saber/static/js/main.e1a8cc0d.chunk.js",
     "runtime-main.js": "/beep-saber/static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.709465d1.chunk.js": "/beep-saber/static/js/2.709465d1.chunk.js",
+    "static/js/2.070fb136.chunk.js": "/beep-saber/static/js/2.070fb136.chunk.js",
     "index.html": "/beep-saber/index.html",
-    "static/js/2.709465d1.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.709465d1.chunk.js.LICENSE.txt",
+    "static/js/2.070fb136.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.070fb136.chunk.js.LICENSE.txt",
     "static/media/HardStandard.cf3a0b56.dat": "/beep-saber/static/media/HardStandard.cf3a0b56.dat",
     "static/media/HitSound.2dc20224.ogg": "/beep-saber/static/media/HitSound.2dc20224.ogg",
     "static/media/Info.d4d4f21d.dat": "/beep-saber/static/media/Info.d4d4f21d.dat",
     "static/media/Roboto-msdf.6aad3506.png": "/beep-saber/static/media/Roboto-msdf.6aad3506.png",
     "static/media/arrow.a13512c7.obj": "/beep-saber/static/media/arrow.a13512c7.obj",
-    "static/media/blade.2f5bcc01.obj": "/beep-saber/static/media/blade.2f5bcc01.obj",
     "static/media/cover.40ba0ad4.jpg": "/beep-saber/static/media/cover.40ba0ad4.jpg",
     "static/media/cube.505574b6.obj": "/beep-saber/static/media/cube.505574b6.obj",
+    "static/media/full_left.b0fcf947.obj": "/beep-saber/static/media/full_left.b0fcf947.obj",
+    "static/media/full_right.272e92bb.obj": "/beep-saber/static/media/full_right.272e92bb.obj",
     "static/media/halfarrow.980cdc77.obj": "/beep-saber/static/media/halfarrow.980cdc77.obj",
     "static/media/halfarrowleft.e3b99ba5.obj": "/beep-saber/static/media/halfarrowleft.e3b99ba5.obj",
     "static/media/halfcube.f07639e8.obj": "/beep-saber/static/media/halfcube.f07639e8.obj",
@@ -22,7 +23,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.709465d1.chunk.js",
-    "static/js/main.c79b3775.chunk.js"
+    "static/js/2.070fb136.chunk.js",
+    "static/js/main.e1a8cc0d.chunk.js"
   ]
 }
