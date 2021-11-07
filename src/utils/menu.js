@@ -257,4 +257,4 @@ function raycast() {
 
 };
 
-export { makeMenu,makeGameover ,setgameover,getgameover,setdefault, updateButtons,makePlayerPlatform };
+export { makeMenu,makeGameover ,setgameover,getgameover,setdefault, updateButtons,makePlayerPlatform};

@@ -11,12 +11,11 @@ import ThreeMeshUI from 'three-mesh-ui';
 import FontJSON from '../assets/Roboto-msdf.json';
 import FontImage from '../assets/Roboto-msdf.png';
 import halfarrow from "../assets/halfarrow.obj";
-import halfarrowleft from "../assets/halfarrowleft.obj";
 import halfcube from "../assets/halfcube.obj";
 import katanaleft from "../assets/full_left.obj";
 import katanaright from "../assets/full_right.obj";
 import songcoverimage from "../assets/songs/homura/cover.jpg";
-import { getscoreinfo} from "../utils/setup.js";
+import { getscoreinfo, setAudio } from "../utils/setup.js";
 import { makeGameover } from "../utils/menu.js";
 // import songogg from "../assets/songs/homura/song.ogg";
 // import songinfo from "../assets/songs/homura/Info.dat";
@@ -582,6 +581,7 @@ const preload = async (_room, mapId, song) => {
 }
 
 const startspawn = async (audio) => {
+    setAudio(audio);
     // console.log("startign spawn");
     spawnObjectCallbacks(room, notes, 0, bpm);
     const convertToTime = 60 / bpm;

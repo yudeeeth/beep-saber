@@ -8,10 +8,15 @@ import { handleCollisions } from "../components/collisiondetect.js";
 
 
 let state;
+let audio;
 let renderScene,composer;
 let delta=0;
 function initialise(props){
     state = props;
+}
+
+const setAudio = (audio_) => {
+    audio = audio_;
 }
 
 function getscoreinfo (){
@@ -30,6 +35,8 @@ function animate() {
 
 function stopAnimation() {
     state.renderer.setAnimationLoop(null);
+    audio.pause();
+    audio.currentTime = 0;
 }
 
 const glowEffect = () => {
@@ -72,4 +79,4 @@ function render() {
     // composer.render();
 }
 
-export { onWindowResize,getscoreinfo , animate, glowEffect, handleCollisions, render , initialise , stopAnimation};
+export { onWindowResize,getscoreinfo , animate, glowEffect, handleCollisions, render , initialise , stopAnimation, setAudio};
