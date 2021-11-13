@@ -285,7 +285,7 @@ function App(props) {
 			]
 			lefttrail.push(createPolygonFromPoints(leftarg,"#e8aea9"));
 			righttrail.push(createPolygonFromPoints(rightarg,"#a9abe8"));
-			if(lefttrail.length >=10 ){
+			if(lefttrail.length >=5 ){
 				scene.remove(lefttrail[0]);
 				scene.remove(righttrail[0]);
 				lefttrail = lefttrail.slice(1);

@@ -559,8 +559,8 @@ function makeCube(room, notes, i, bpm) {
     object.userData.velocity = 12;
     object.userData.index = i;
     i++;
-    // if (i < notes.length)
-    if (i < 1)
+    if (i < notes.length)
+    // if (i < 1)
         spawnObjectCallbacks(room, notes, i, bpm);
     else {
         setTimeout(() => {

@@ -1,0 +1,7 @@
+.inp{
+    background-color: rgb(0, 0, 211);
+    border-radius: 1em;
+}
+.inp:hover{
+    background-color: blue;
+}

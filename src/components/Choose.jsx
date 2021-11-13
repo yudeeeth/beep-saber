@@ -5,6 +5,8 @@ import { setdefault, setgameover, getgameover  } from "../utils/menu.js";
 import songogg from "../assets/songs/homura/song.egg";
 import songinfo from "../assets/songs/homura/Info.dat";
 import songfile from "../assets/songs/homura/HardStandard.dat";
+import "./choose.css";
+
 
 class Choose extends React.Component {
 
@@ -102,7 +104,7 @@ class Choose extends React.Component {
                 <div>Hello the roomcode is : {this.getRoomcode()}.</div>
                 <p>Start game as soon as you Enter</p>
                 <input type="checkbox" defaultChecked="true" onClick={setdefault} />
-                <button onClick={this.enterwithdefault}> Enter with default song </button>
+                <button className="inp" onClick={this.enterwithdefault}> Enter with default song </button>
                 <h3>Enter Map Link</h3>
                 <input type="text" value={this.state.mapURL} onChange={this.handleURLChange} />
                 <button onClick={this.setMapId}>Load Map</button>
