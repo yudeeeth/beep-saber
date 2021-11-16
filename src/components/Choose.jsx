@@ -88,28 +88,39 @@ class Choose extends React.Component {
 
     menu = () => {
         return (
-            <div>
-                <h1>Instructions:</h1>
-                <p>
+            <div className="inp">
+                <div className="area" >
+                        <ul class="circles">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                        </ul>
+                <h1 className="tex">Instructions:</h1>
+                <p className="bodytex">
                     1. Open https://beep-saber.herokuapp.com
                     <br />
-                    2. Set colors of balls in that site
+                    2. Type in the roomcode shown below in that website
                     <br />
-                    3. Type in the roomcode shown below in that website
+                    3. Press join in that website.
                     <br />
-                    4. Press join in that website.
-                    <br />
-                    5. Press start in this website.
+                    4. Press start in this website.
                 </p>
-                <div>Hello the roomcode is : {this.getRoomcode()}.</div>
-                <p>Start game as soon as you Enter</p>
+                <div className="bodytex">The room code is : {this.getRoomcode()}.</div>
+                <p className="bodytex">Start game as soon as you enter</p>
                 <input type="checkbox" defaultChecked="true" onClick={setdefault} />
-                <button className="inp" onClick={this.enterwithdefault}> Enter with default song </button>
-                <h3>Enter Map Link</h3>
-                <input type="text" value={this.state.mapURL} onChange={this.handleURLChange} />
-                <button onClick={this.setMapId}>Load Map</button>
-                <p>{this.state.mapId != "" ? `Map ${this.state.mapId} Loaded.` : "Please Enter a Map Url"}</p>
-                <h3>Difficulty</h3>
+                <button className="btn" onClick={this.enterwithdefault}> Enter with default song </button>
+                <h3 className="tex">Enter Map Link</h3>
+                <input className="bodytex" type="text" value={this.state.mapURL} onChange={this.handleURLChange} />
+                <button className="btn" onClick={this.setMapId}>Load Map</button>
+                <p className="bodytex">{this.state.mapId != "" ? `Map ${this.state.mapId} Loaded.` : "Please Enter a Map Url"}</p>
+                <h3 className="tex">Difficulty</h3>
                 <select value={this.state.difficulty} onChange={(event) => this.setState({ difficulty: event.target.value })}>
                     {
                         this.state.difficultyOptions.map((difficulty) => {
@@ -117,7 +128,7 @@ class Choose extends React.Component {
                         })
                     }
                 </select>
-                <button onClick={this.loadCurrentDifficulty}>Load Difficulty</button>
+                <button className="btn" onClick={this.loadCurrentDifficulty}>Load Difficulty</button>
                 <br />
                 <br />
                 {
@@ -125,6 +136,7 @@ class Choose extends React.Component {
                         <button onClick={this.changeComponent}>Open Game</button>
                         : null
                 }
+                </div >
             </div>
         );
     };
