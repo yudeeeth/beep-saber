@@ -92,7 +92,7 @@ class Choose extends React.Component {
         return (
             <div className="inp">
                 <div className="area" >
-                        <ul class="circles">
+                        <ul className="circles">
                                 <li></li>
                                 <li></li>
                                 <li></li>
@@ -104,6 +104,7 @@ class Choose extends React.Component {
                                 <li></li>
                                 <li></li>
                         </ul>
+                </div >
                 <h1 className="tex">Instructions:</h1>
                 <p className="bodytex">
                     1. Open https://beep-saber.herokuapp.com
@@ -138,7 +139,6 @@ class Choose extends React.Component {
                         <button onClick={this.changeComponent}>Open Game</button>
                         : null
                 }
-                </div >
             </div>
         );
     };
