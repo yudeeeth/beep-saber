@@ -33,7 +33,7 @@ const getgameover = () => {
 }
 
 const setdefault = (e) => {
-	console.log(e.target.checked);
+	// console.log(e.target.checked);
 	defaultstart = e.target.checked;
 }
 
@@ -67,9 +67,10 @@ const makeGameover = (scene,score) => {
     scene.add(overui);
 	setTimeout(() => {
 		// setgameover(true);
+		window.location.reload();
 		parent.setState({start:false});
 		stopAnimation();
-		console.log("gameover");
+		// console.log("gameover");
 
 	}, 3000);
 };
@@ -172,9 +173,9 @@ const makebutton = (scene,vrUI,audio)=>{
 			else{
 				// console.log("onset menu");
 				startspawn(audio);
-				console.log(scene.getObjectByName("vrui"));
+				// console.log(scene.getObjectByName("vrui"));
 				scene.remove(vrUI);
-				console.log(scene.getObjectByName("vrui"));
+				// console.log(scene.getObjectByName("vrui"));
 				
 			}
 		}

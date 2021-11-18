@@ -21,6 +21,7 @@ function App(props) {
 	let prevleft,prevright;
 	// do once at the beginning
 	useEffect(() => {
+		roomcode = props.roomcode;
 		const socket = io("https://beep-saber.herokuapp.com/", {
 			withCredentials: true,
 			extraHeaders: {
@@ -47,7 +48,7 @@ function App(props) {
 
 	useEffect(() => {
 		if(isStarted!==undefined && isStarted){
-			console.log(song);
+			// console.log(song);
 			callAllFunctions();
 		}
 	}, [isStarted]);
@@ -182,7 +183,7 @@ function App(props) {
 		  material.transparent = true;
 		  material.opacity = 0.5;
 		  let mesh = new THREE.Mesh(shapeGeom, material);
-		  console.log(mesh.geometry);
+		//   console.log(mesh.geometry);
 		  
 		  let box = new THREE.Box3().setFromObject(mesh);
 		  let size = new THREE.Vector3();
@@ -313,7 +314,7 @@ function App(props) {
 	}
 
 	const callAllFunctions = () => {
-		console.log("calling all functions");
+		// console.log("calling all functions");
 		init();
 		clock.start();
 		initialise({renderer, camera, room, balls, scene, clock, scoreInfo});

@@ -25,7 +25,8 @@ class Choose extends React.Component {
 
     menuOrApp = () => {
         if (!(this.state.start ))
-            {   console.log("returning menu");
+            {   
+                // console.log("returning menu");
                 // this.setState({start:false});
                 return this.menu();
             }
@@ -35,6 +36,7 @@ class Choose extends React.Component {
             mapId={this.state.mapId}
             isStarted={this.state.start}
             audio={this.state.audio}
+            roomcode={this.state.roomcode}
         />;
     };
 
@@ -47,7 +49,7 @@ class Choose extends React.Component {
         let mapId = mapURL.split("/")[3];
         if (mapId === undefined) return;
         mapId = mapId.split(".")[0];
-        console.log(mapId);
+        // console.log(mapId);
         this.setState({ mapId: mapId });
         this.readSongFiles(mapId);
     }
