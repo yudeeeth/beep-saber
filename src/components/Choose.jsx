@@ -107,21 +107,29 @@ class Choose extends React.Component {
                 </div >
                 <h1 className="tex">Instructions:</h1>
                 <p className="bodytex">
-                    1. Open https://beep-saber.herokuapp.com
+                    1. The current page must be opened with a mobile in order to experience it in VR.
                     <br />
-                    2. Type in the roomcode shown below in that website
+                    2. Open <a href="https://beep-saber.herokuapp.com/pose">Input Webpage</a> in your laptop/PC.
                     <br />
-                    3. Press join in that website.
+                    3. Type in the roomcode shown below in that website
                     <br />
-                    4. Press start in this website.
+                    4. Press join in that website.
+                    <br />
+                    5. Press start in this website.
+                    <br />
+                    6. Either click Enter with default song below, 
+                    <br /> or 
+                    find a song link from <a href="https://beatsaver.com/"> beatsaver  </a>  and paste it in map link.
+                    <br />
+                    7. Slide phone into VR, stand in front of the camera (of laptop) and enjoy.
                 </p>
-                <div className="bodytex">The room code is : {this.getRoomcode()}.</div>
-                <p className="bodytex">Start game as soon as you enter</p>
-                <input type="checkbox" defaultChecked="true" onClick={setdefault} />
+                <div className="bodytex">The room code is : <span className="code">{this.getRoomcode()}</span></div>
+                {/* <input type="checkbox" defaultChecked="true" onClick={setdefault} /> */}
                 <button className="btn" onClick={this.enterwithdefault}> Enter with default song </button>
-                <h3 className="tex">Enter Map Link</h3>
+                <p>OR</p>
+                <h3 className="tex">First Enter Map Link</h3>
                 <input className="bodytex" type="text" value={this.state.mapURL} onChange={this.handleURLChange} />
-                <button className="btn" onClick={this.setMapId}>Load Map</button>
+                <button className="btn" onClick={this.setMapId}>Then Load Map</button>
                 <p className="bodytex">{this.state.mapId != "" ? `Map ${this.state.mapId} Loaded.` : "Please Enter a Map Url"}</p>
                 <h3 className="tex">Difficulty</h3>
                 <select value={this.state.difficulty} onChange={(event) => this.setState({ difficulty: event.target.value })}>
@@ -131,7 +139,7 @@ class Choose extends React.Component {
                         })
                     }
                 </select>
-                <button className="btn" onClick={this.loadCurrentDifficulty}>Load Difficulty</button>
+                <button className="btn" onClick={this.loadCurrentDifficulty}>and then Load Difficulty</button>
                 <br />
                 <br />
                 {

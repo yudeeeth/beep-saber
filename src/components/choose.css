@@ -1,5 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend&family=Teko&display=swap');
 
+*{
+    font-size: 1.3rem;
+    margin:0px;
+    /* color:white; */
+}
+
+h1{
+    font-size: 2rem;
+    padding-top:1rem;
+    padding-bottom:1rem;
+}
+p{
+    margin-bottom: 1rem;
+}
 .inp{
     text-align: center;
     text-shadow: 2px, 2px;
@@ -29,7 +43,17 @@
 }
 
 .btn:hover{
-    background-color:  #b07eda;
+    background-color:  rgb(155, 81, 216);
+}
+
+a{
+    color:cornsilk;
+}
+
+.code{
+    background-color: white;
+    border-radius: 0.25rem;
+    padding:0.1rem 0.5rem;
 }
 
 /* .context {

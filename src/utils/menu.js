@@ -46,8 +46,8 @@ const makeMenu = (scene,audio) => {
         fontTexture: FontImage,
     });
 	vrUI.name = "vrui";
-    vrUI.position.set(0, 1.5, 1);
-    vrUI.rotation.x = -0.55;
+    vrUI.position.set(0, 1.5, -1);
+    // vrUI.rotation.x = -0.55;
     makebutton(scene,vrUI,audio);
     scene.add(vrUI);
 };
@@ -75,6 +75,7 @@ const makeGameover = (scene,score) => {
 	}, 3000);
 };
 
+//gameover button display
 const showScore = (scene,parent,score)=>{
     const buttonOptions = {
 		width: 0.9,
@@ -120,14 +121,18 @@ function makePlayerPlatform(scene) {
 	});
 };
 
+//menu button 
 const makebutton = (scene,vrUI,audio)=>{
     const buttonOptions = {
-		width: 0.4,
-		height: 0.15,
+		width: 0.9,
+		height: 0.3,
 		justifyContent: 'center',
 		alignContent: 'center',
+		fontFamily: FontJSON,
+        fontTexture: FontImage,
 		offset: 0.05,
 		margin: 0.02,
+		fontSize:0.1,
 		borderRadius: 0.075
 	};
 
