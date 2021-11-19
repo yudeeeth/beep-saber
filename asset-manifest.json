@@ -1,11 +1,11 @@
 {
   "files": {
     "main.css": "/beep-saber/static/css/main.8a1c440b.chunk.css",
-    "main.js": "/beep-saber/static/js/main.fc928633.chunk.js",
+    "main.js": "/beep-saber/static/js/main.a5a72d21.chunk.js",
     "runtime-main.js": "/beep-saber/static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.e7fb23a0.chunk.js": "/beep-saber/static/js/2.e7fb23a0.chunk.js",
+    "static/js/2.7b234fa9.chunk.js": "/beep-saber/static/js/2.7b234fa9.chunk.js",
     "index.html": "/beep-saber/index.html",
-    "static/js/2.e7fb23a0.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.e7fb23a0.chunk.js.LICENSE.txt",
+    "static/js/2.7b234fa9.chunk.js.LICENSE.txt": "/beep-saber/static/js/2.7b234fa9.chunk.js.LICENSE.txt",
     "static/media/HardStandard.cf3a0b56.dat": "/beep-saber/static/media/HardStandard.cf3a0b56.dat",
     "static/media/HitSound.2dc20224.ogg": "/beep-saber/static/media/HitSound.2dc20224.ogg",
     "static/media/Info.d4d4f21d.dat": "/beep-saber/static/media/Info.d4d4f21d.dat",
@@ -23,8 +23,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.e6a0ec35.js",
-    "static/js/2.e7fb23a0.chunk.js",
+    "static/js/2.7b234fa9.chunk.js",
     "static/css/main.8a1c440b.chunk.css",
-    "static/js/main.fc928633.chunk.js"
+    "static/js/main.a5a72d21.chunk.js"
   ]
 }
