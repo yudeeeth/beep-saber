@@ -88,9 +88,24 @@ class Choose extends React.Component {
         })
     }
 
+    copyToClipboard = () => {
+        let text = document.getElementById("roomcode");
+        text.select();
+        text.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(text.value);
+        let tooltip = document.getElementById("tooltip");
+        tooltip.innerHTML = "Copied: " + text.value;
+    }
+
+    displayToolTip = () => {
+        let tooltip = document.getElementById("tooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+    }
+
     menu = () => {
         return (
             <div className="inp">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
                 <div className="area" >
                         <ul className="circles">
                                 <li></li>
@@ -109,7 +124,7 @@ class Choose extends React.Component {
                 <p className="bodytex">
                     1. The current page must be opened with a mobile in order to experience it in VR.
                     <br />
-                    2. Open <a href="https://beep-saber.herokuapp.com/pose">Input Webpage</a> in your laptop/PC.
+                    2. Open <a href="https://beep-saber.herokuapp.com/pose" target="_blank">Input Webpage</a> in your laptop/PC.
                     <br />
                     3. Type in the roomcode shown below in that website
                     <br />
@@ -119,12 +134,15 @@ class Choose extends React.Component {
                     <br />
                     6. Either click Enter with default song below, 
                     <br /> or 
-                    find a song link from <a href="https://beatsaver.com/"> beatsaver  </a>  and paste it in map link.
+                    find a song link from <a href="https://beatsaver.com/" target="_blank"> beatsaver  </a>  and paste it in map link.
                     <br />
                     7. Slide phone into VR, stand in front of the camera (of laptop) and enjoy.
                 </p>
-                <div className="bodytex">The room code is : <span className="code">{this.getRoomcode()}</span></div>
-                {/* <input type="checkbox" defaultChecked="true" onClick={setdefault} /> */}
+                <div className="bodytex">The room code is : <input id="roomcode" className="bodytex" value={this.getRoomcode()} />
+                    <div className="tooltip">
+                        <button onClick={this.copyToClipboard} onMouseOut={this.displayToolTip}><span class="tooltiptext" id="tooltip">Copy to clipboard</span><i className="fa fa-copy" style={{"height": "1.3em"}}></i></button>
+                    </div>
+                </div>
                 <button className="btn" onClick={this.enterwithdefault}> Enter with default song </button>
                 <p>OR</p>
                 <h3 className="tex">First Enter Map Link</h3>
