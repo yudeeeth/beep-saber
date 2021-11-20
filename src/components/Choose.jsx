@@ -140,7 +140,7 @@ class Choose extends React.Component {
                 </p>
                 <div className="bodytex">The room code is : <input id="roomcode" className="bodytex" value={this.getRoomcode()} />
                     <div className="tooltip">
-                        <button onClick={this.copyToClipboard} onMouseOut={this.displayToolTip}><span class="tooltiptext" id="tooltip">Copy to clipboard</span><i className="fa fa-copy" style={{"height": "1.3em"}}></i></button>
+                        <button onClick={this.copyToClipboard} className="btn" onMouseOut={this.displayToolTip}><span className="tooltiptext btn" id="tooltip">Copy to clipboard</span><i className="fa fa-copy" style={{"height": "1.3em"}}></i></button>
                     </div>
                 </div>
                 <button className="btn" onClick={this.enterwithdefault}> Enter with default song </button>
