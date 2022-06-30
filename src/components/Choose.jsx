@@ -55,12 +55,12 @@ class Choose extends React.Component {
     }
 
     fetchFile = async (mapId, fileName, callBack) => {
-        let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}/file/${fileName}`)
+        let res = await fetch(`https://beep-saber.azurewebsites.net/map/${mapId}/file/${fileName}`)
         callBack(res);
     };
 
     readSongFiles = async (mapId) => {
-        let res = await fetch(`https://beep-saber.herokuapp.com/map/${mapId}`)
+        let res = await fetch(`https://beep-saber.azurewebsites.net/map/${mapId}`)
         let data = await res.text();
         await this.fetchFile(mapId, 'Info.dat', async (res) => {
             let data = await res.text();
@@ -71,7 +71,7 @@ class Choose extends React.Component {
                 this.state.difficultyOptions.push(map['_difficulty'])
             });
             this.setState({ standardMaps: standardMaps });
-            let audio = new Audio(`https://beep-saber.herokuapp.com/map/${mapId}/file/${song['_songFilename']}`);
+            let audio = new Audio(`https://beep-saber.azurewebsites.net/map/${mapId}/file/${song['_songFilename']}`);
             this.setState({ audio: audio });
         })
     }
@@ -124,7 +124,7 @@ class Choose extends React.Component {
                 <p className="bodytex">
                     1. The current page must be opened with a mobile in order to experience it in VR.
                     <br />
-                    2. Open <a href="https://beep-saber.herokuapp.com/pose" target="_blank">Input Webpage</a> in your laptop/PC.
+                    2. Open <a href="https://beep-saber.azurewebsites.net/pose" target="_blank">Input Webpage</a> in your laptop/PC.
                     <br />
                     3. Type in the roomcode shown below in that website
                     <br />

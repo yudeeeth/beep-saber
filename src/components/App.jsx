@@ -22,7 +22,7 @@ function App(props) {
 	// do once at the beginning
 	useEffect(() => {
 		roomcode = props.roomcode;
-		const socket = io("https://beep-saber.herokuapp.com/", {
+		const socket = io("https://beep-saber.azurewebsites.net/", {
 			withCredentials: true,
 			extraHeaders: {
 				"my-custom-header": "abcd"
