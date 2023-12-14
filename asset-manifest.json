@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/beep-saber/static/css/main.21a2bd8c.css",
-    "main.js": "/beep-saber/static/js/main.8780404f.js",
+    "main.css": "/beep-saber/static/css/main.b79e4b3a.css",
+    "main.js": "/beep-saber/static/js/main.4a55fc53.js",
     "static/media/full_right.obj": "/beep-saber/static/media/full_right.0aaf61f3be6e216b34a2.obj",
     "static/media/song.egg": "/beep-saber/static/media/song.2ac209a28d303563edb2.egg",
     "static/media/full_left.obj": "/beep-saber/static/media/full_left.bd5fb5de38f3f35a171b.obj",
@@ -16,12 +16,10 @@
     "static/media/arrow.obj": "/beep-saber/static/media/arrow.208208aac6cca2d5c7dc.obj",
     "static/media/Info.dat": "/beep-saber/static/media/Info.4e23eb30097f58f52548.dat",
     "static/media/halfarrow.obj": "/beep-saber/static/media/halfarrow.4f9c642a15746823a08d.obj",
-    "index.html": "/beep-saber/index.html",
-    "main.21a2bd8c.css.map": "/beep-saber/static/css/main.21a2bd8c.css.map",
-    "main.8780404f.js.map": "/beep-saber/static/js/main.8780404f.js.map"
+    "index.html": "/beep-saber/index.html"
   },
   "entrypoints": [
-    "static/css/main.21a2bd8c.css",
-    "static/js/main.8780404f.js"
+    "static/css/main.b79e4b3a.css",
+    "static/js/main.4a55fc53.js"
   ]
 }
