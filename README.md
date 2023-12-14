@@ -1,6 +1,6 @@
 # Beep-Saber
 This repo contains the frontend code for this project.
-The [repo](https://github.com/marmikupadhyay/beep-saber-server) for the tracking website is [Tracking Website](https://beep-saber.azurewebsites.net/pose) 
+The [repo](https://github.com/marmikupadhyay/beep-saber-server) for the tracking website is [Tracking Website](https://beepsaber.azurewebsites.net/pose) 
 
 ## Installation for dev
 

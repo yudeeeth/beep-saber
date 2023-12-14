@@ -373,7 +373,7 @@ const makeHUD = (scene, options, scoreInfo, mapId, song, audio) => {
     });
 
     if (!usedefaultsong) {
-        new THREE.TextureLoader().load(`https://beep-saber.azurewebsites.net/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
+        new THREE.TextureLoader().load(`https://beepsaber.azurewebsites.net/map/${mapId}/file/${song['_coverImageFilename']}`, (texture) => {
             songCover.set({
                 backgroundTexture: texture,
                 backgroundOpacity: 0.7,
